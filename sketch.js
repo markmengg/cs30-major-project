@@ -5,6 +5,19 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+//img
+let bg_house;
+let bg_road;
+let bg_topFense;
+let bg_botTile;
+let lawn;
+
+
+
+
+
+
+
 
 //(9*5 gird)
 let grid = [];
@@ -18,7 +31,11 @@ let grid_default;
 
 
 function preload(){
-  
+  bg_botTile = loadImage("bottile.png")
+  bg_house = loadImage("house.png")
+  bg_topFense = loadImage("topfense.png")
+  bg_road= loadImage("road.png")
+  lawn = loadImage("lawn.png")
 }
 
 function setup() {
@@ -28,5 +45,8 @@ function setup() {
 function draw() {
   background(220);
 
-  circle(mouseX, mouseY, 100);
+  
 }
+
+
+
