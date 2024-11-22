@@ -23,5 +23,6 @@ For our major project, Michael and I are planning to recreate the game "Plants v
 - Zen garden
 - More than 5 fully functioning levels
 - Endless mode
+- Loading screen
 
 
