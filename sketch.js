@@ -8,8 +8,8 @@
 //img
 let bg_house;
 let bg_road;
-let bg_topFense;
-let bg_botTile;
+let bg_topFence;
+let bg_bottomTile;
 let lawn;
 
 
@@ -27,15 +27,22 @@ let gameState = "beginning";
 
 
 let grid_default;
-
+let sunGif;
 
 
 function preload(){
-  bg_botTile = loadImage("bottile.png")
-  bg_house = loadImage("house.png")
-  bg_topFense = loadImage("topfense.png")
-  bg_road= loadImage("road.png")
-  lawn = loadImage("lawn.png")
+  // Background Images
+  bg_bottomTile = loadImage("bgImages/day/bottomtile.png");
+  bg_house = loadImage("bgImages/day/house.png");
+  bg_topFence = loadImage("bgImages/day/topFence.png");
+  bg_road= loadImage("bgImages/day/road.png");
+  lawn = loadImage("bgImages/day/lawn.png");
+  
+
+
+  sunGif = loadImage("GIFs/sun.gif");
+
+
 }
 
 function setup() {
@@ -44,9 +51,20 @@ function setup() {
 
 function draw() {
   background(220);
-
-  
+  displayBackground();
 }
 
 
+function displayBackground(){
+  image(bg_house, 0, 0);
+  let bottomTileX = bg_house.width;
+  let bottomTileY = bg_house.height - bg_bottomTile.height;
+  image(bg_bottomTile, bottomTileX, bottomTileY);
+  let roadX = bottomTileX + bg_bottomTile.width;
+  image(bg_road, roadX, 0);
 
+  image(bg_topFence, bottomTileX, 0);
+  let lawnY = bg_topFence.height;
+  image(lawn,bottomTileX,lawnY);
+  // image()
+}
