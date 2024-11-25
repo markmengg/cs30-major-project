@@ -37,7 +37,7 @@ function preload(){
   bg_topFence = loadImage("bgImages/day/topFence.png");
   bg_road= loadImage("bgImages/day/road.png");
   lawn = loadImage("bgImages/day/lawn.png");
-  lawnend = loadImage("bgImages/day/lawnroadinbetween")
+  lawnend = loadImage("bgImages/day/lawnroadinbetween.png")
   
 
 
