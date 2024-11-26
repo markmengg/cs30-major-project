@@ -14,6 +14,12 @@ let lawn;
 let lawnend;
 
 
+let sm_adventure;
+let sm_minigame;
+let sm_puzzle
+let sm_survival;   
+
+let
 
 
 
@@ -37,8 +43,12 @@ function preload(){
   bg_topFence = loadImage("bgImages/day/topFence.png");
   bg_road= loadImage("bgImages/day/road.png");
   lawn = loadImage("bgImages/day/lawn.png");
-  lawnend = loadImage("bgImages/day/lawnroadinbetween.png")
+  lawnend = loadImage("bgImages/day/lawnroadinbetween.png");
   
+  //startmenu
+  sm_adventure = 
+
+
 
 
   sunGif = loadImage("GIFs/sun.gif");
@@ -53,17 +63,30 @@ function setup() {
 function draw() {
   background(220);
   displayBackground();
+  mousexy();//delete last
 }
-
 
 function displayBackground(){
   image(bg_house, 0, 0);
-  image(bg_topFence,bg_house.width,0)
-  image(bg_bottomTile,bg_house.width,bg_topFence.height+lawn.height)
-  image(lawnend,bg_house.width+lawn.width,0)
-  // image(bg_road,bg_house.width+bg_topFence.width+lawnend.width, 0)
-  image(lawn, bg_house.width, bg_topFence.height)
+  image(bg_topFence,bg_house.width,0);
+  image(bg_bottomTile,bg_house.width,bg_topFence.height+lawn.height);
+  image(lawnend,bg_house.width+lawn.width,0);
+
+  // Only for camera pan
+  // image(bg_road,bg_house.width+bg_topFence.width+lawnend.width, 0);
+  image(lawn, bg_house.width, bg_topFence.height);
 
 
+  
+}
+
+
+function mousexy(){
+  textSize(24);
+  fill("yellow");
+  text("X: " + mouseX + "  Y: " + mouseY, 10, 20);
+}
+
+function startInterface() {
   
 }
