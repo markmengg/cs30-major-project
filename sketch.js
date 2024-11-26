@@ -20,13 +20,25 @@ let lawnend;
 let sm_background;
 
 let sm_adventure;
+let sm_adventure_hovered;
+
 let sm_minigame;
+let sm_minigame_hovered;
+
 let sm_puzzle;
+let sm_puzzle_hovered;
+
 let sm_survival;   
+let sm_survival_hovered;
 
 let sm_options;
+let sm_options_hovered;
+
 let sm_help;
+let sm_help_hovered;
+
 let sm_quit;
+let sm_quit_hovered;
 
 
 
@@ -74,6 +86,8 @@ function preload(){
   sm_help =loadImage("menus/startmenu/buttons/help.png");
   sm_quit =loadImage("menus/startmenu/buttons/quit.png");
 
+  // Start Menu Buttons Hovered
+
 
 
   sunGif = loadImage("GIFs/sun.gif");
@@ -119,9 +133,11 @@ function mousexy(){
 }
 
 function startMenu() {
-  
   image(sm_background, 0, 0);
-
   image(sm_adventure, 391, 64); 
-
+  image(sm_minigame,397,160)//(13,18)
+  image(sm_puzzle,410,259)
+  image(sm_survival,417,326)
 }
+
+function 
