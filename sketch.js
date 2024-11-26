@@ -5,21 +5,30 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-//img
+// Images
+
+// Background Images
 let bg_house;
 let bg_road;
 let bg_topFence;
 let bg_bottomTile;
+
 let lawn;
 let lawnend;
 
+// Start Menu Images
+let sm_background;
 
 let sm_adventure;
 let sm_minigame;
-let sm_puzzle
+let sm_puzzle;
 let sm_survival;   
 
-let
+let sm_options;
+let sm_help;
+let sm_quit;
+
+
 
 
 
@@ -29,12 +38,12 @@ let
 let grid = [];
 const COLS = 9;
 const ROWS = 5;
-let gameState = "beginning";
+let gameState = "start";
 
 
 let grid_default;
 let sunGif;
-
+let gameStartButton;
 
 function preload(){
   // Background Images
@@ -45,9 +54,17 @@ function preload(){
   lawn = loadImage("bgImages/day/lawn.png");
   lawnend = loadImage("bgImages/day/lawnroadinbetween.png");
   
-  //startmenu
-  sm_adventure = 
+  // Start Menu
+  sm_background = loadImage("menus/startmenu/bg.png");
 
+  sm_adventure = loadImage("menus/startmenu/buttons/adventure.png");
+  sm_minigame = loadImage("menus/startmenu/buttons/minig.png");
+  sm_puzzle = loadImage("menus/startmenu/buttons/puzzle.png");
+  sm_survival = loadImage("menus/startmenu/buttons/survival.png");
+  
+  sm_options = loadImage("menus/startmenu/buttons/options.png");
+  sm_help =loadImage("menus/startmenu/buttons/help.png");
+  sm_quit =loadImage("menus/startmenu/buttons/quit.png");
 
 
 
@@ -62,7 +79,13 @@ function setup() {
 
 function draw() {
   background(220);
-  displayBackground();
+  if (gameState === "start") {
+    startMenu();
+  }
+  else if (gameState === "game") {
+    displayBackground();
+  }
+  //displayBackground();
   mousexy();//delete last
 }
 
@@ -71,10 +94,10 @@ function displayBackground(){
   image(bg_topFence,bg_house.width,0);
   image(bg_bottomTile,bg_house.width,bg_topFence.height+lawn.height);
   image(lawnend,bg_house.width+lawn.width,0);
+  image(lawn, bg_house.width, bg_topFence.height);
 
   // Only for camera pan
   // image(bg_road,bg_house.width+bg_topFence.width+lawnend.width, 0);
-  image(lawn, bg_house.width, bg_topFence.height);
 
 
   
@@ -87,6 +110,10 @@ function mousexy(){
   text("X: " + mouseX + "  Y: " + mouseY, 10, 20);
 }
 
-function startInterface() {
+function startMenu() {
   
+  image(sm_background, 0, 0);
+
+  image(sm_adventure, 391, 64); 
+
 }
