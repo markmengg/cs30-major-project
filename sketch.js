@@ -87,7 +87,15 @@ function preload(){
   sm_quit =loadImage("menus/startmenu/buttons/quit.png");
 
   // Start Menu Buttons Hovered
-
+  sm_adventure_hovered = loadImage("menus/startmenu/buttons/hovered/adventure.png");
+  sm_minigame_hovered = loadImage("menus/startmenu/buttons/hovered/minig.png");
+  sm_puzzle_hovered = loadImage("menus/startmenu/buttons/hovered/puzzle.png");
+  sm_survival_hovered = loadImage("menus/startmenu/buttons/hovered/survival.png");
+  
+  sm_options_hovered = loadImage("menus/startmenu/buttons/hovered/options.png");
+  sm_help_hovered =loadImage("menus/startmenu/buttons/hovered/help.png");
+  sm_quit_hovered =loadImage("menus/startmenu/buttons/hovered/quit.png");
+  
 
 
   sunGif = loadImage("GIFs/sun.gif");
@@ -108,11 +116,12 @@ function draw() {
     displayBackground();
   }
   //displayBackground();
-  mousexy();//delete last
+  displayMouseXY();//delete last
+  
 }
 
 function displayBackground(){
-  image(bg_house, 0, 0);
+  // image(bg_house, 0, 0); for the start of pan
   image(bg_topFence,bg_house.width,0);
   image(bg_bottomTile,bg_house.width,bg_topFence.height+lawn.height);
   image(lawnend,bg_house.width+lawn.width,0);
@@ -126,7 +135,7 @@ function displayBackground(){
 }
 
 
-function mousexy(){
+function displayMouseXY(){
   textSize(24);
   fill("yellow");
   text("X: " + mouseX + "  Y: " + mouseY, 10, 20);
@@ -135,9 +144,43 @@ function mousexy(){
 function startMenu() {
   image(sm_background, 0, 0);
   image(sm_adventure, 391, 64); 
-  image(sm_minigame,397,160)//(13,18)
-  image(sm_puzzle,410,259)
-  image(sm_survival,417,326)
+  image(sm_minigame,397,160);//(13,18)
+  image(sm_puzzle,410,259);
+  image(sm_survival,417,326);
+  // image(sm_help);
+  startMenuHovered();
+  
 }
 
-function 
+
+function startMenuHovered() {
+  // Adventure
+  if (mouseX >= 413 && mouseX <= 731 && mouseY > 94 && mouseY < 197) {
+    image(sm_adventure_hovered, 405, 64);
+  }
+  // Mini Game
+  if (mouseX >= 407 && mouseX <= 711 && mouseY > 178 && mouseY < 263) {
+    image(sm_minigame_hovered, 405, 171);
+  } 
+  // Puzzle
+  if (mouseX >= 413 && mouseX <= 687 && mouseY > 278 && mouseY < 346) {
+    image(sm_puzzle_hovered, 410, 257);
+  }
+  // Survival
+  if (mouseX >= 420 && mouseX <= 675 && mouseY > 351 && mouseY < 409) {
+    image(sm_survival_hovered, 416, 325);
+  }
+  // Options
+  if (mouseX >= 565 && mouseX <= 640 && mouseY > 473 && mouseY < 528) {
+    image(sm_options_hovered, 405, 64);
+  }
+  // Help
+  // Quit
+
+}
+
+
+function mousePressed(){
+  
+}
+//function startAdventure(); {game = S}
