@@ -43,7 +43,15 @@ let gameState = "start";
 
 let grid_default;
 let sunGif;
-let gameStartButton;
+
+// Start Screen Buttons
+let adventureButton;
+let minigButton;
+let puzzleButton;
+let survivalButton;
+let optionsButton;
+let helpButton;
+let quitButton;
 
 function preload(){
   // Background Images
