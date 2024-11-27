@@ -1,5 +1,5 @@
-// Project Title
-// Your Name
+// Plants vs. Zombies
+// Mark Meng and Michael Zhu
 // Date
 //
 // Extra for Experts:
@@ -112,7 +112,7 @@ function draw() {
   if (gameState === "start") {
     startMenu();
   }
-  else if (gameState === "game") {
+  else if (gameState === "adventureGame") {
     displayBackground();
   }
   //displayBackground();
@@ -121,6 +121,7 @@ function draw() {
 }
 
 function displayBackground(){
+  setup();
   // image(bg_house, 0, 0); for the start of pan
   image(bg_topFence,bg_house.width,0);
   image(bg_bottomTile,bg_house.width,bg_topFence.height+lawn.height);
@@ -143,44 +144,46 @@ function displayMouseXY(){
 
 function startMenu() {
   image(sm_background, 0, 0);
-  image(sm_adventure, 391, 64); 
-  image(sm_minigame,397,160);//(13,18)
-  image(sm_puzzle,410,259);
-  image(sm_survival,417,326);
-  // image(sm_help);
   startMenuHovered();
   
 }
 
 
 function startMenuHovered() {
-  // Adventure
+  // Adventure Button
   if (mouseX >= 413 && mouseX <= 731 && mouseY > 94 && mouseY < 197) {
     image(sm_adventure_hovered, 405, 64);
   }
-  // Mini Game
+  // Mini Game Button
   if (mouseX >= 407 && mouseX <= 711 && mouseY > 178 && mouseY < 263) {
     image(sm_minigame_hovered, 405, 171);
   } 
-  // Puzzle
+  // Puzzle Button
   if (mouseX >= 413 && mouseX <= 687 && mouseY > 278 && mouseY < 346) {
     image(sm_puzzle_hovered, 410, 257);
   }
-  // Survival
+  // Survival Button
   if (mouseX >= 420 && mouseX <= 675 && mouseY > 351 && mouseY < 409) {
     image(sm_survival_hovered, 416, 325);
   }
-  // Options
+  // Options Button
   if (mouseX >= 565 && mouseX <= 640 && mouseY > 473 && mouseY < 528) {
-    image(sm_options_hovered, 405, 64);
+    image(sm_options_hovered, 551, 427);
   }
-  // Help
-  // Quit
-
+  // Help Button
+  if (mouseX >= 650 && mouseX <= 698 && mouseY > 492 && mouseY < 550) {
+    image(sm_help_hovered, 637, 412);
+  }
+  // Quit Button
+  if (mouseX >= 705 && mouseX <= 770 && mouseY > 470 && mouseY < 550) {
+    image(sm_quit_hovered, 702, 441);
+  }
 }
 
 
-function mousePressed(){
-  
+function mouseReleased(){
+  if (mouseX >= 420 && mouseX <= 675 && mouseY > 351 && mouseY < 409) {
+    gameState = "adventureGame";
+  }
 }
 //function startAdventure(); {game = S}
