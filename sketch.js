@@ -77,15 +77,6 @@ function preload(){
   // Start Menu
   sm_background = loadImage("menus/startmenu/bg.png");
 
-  sm_adventure = loadImage("menus/startmenu/buttons/adventure.png");
-  sm_minigame = loadImage("menus/startmenu/buttons/minig.png");
-  sm_puzzle = loadImage("menus/startmenu/buttons/puzzle.png");
-  sm_survival = loadImage("menus/startmenu/buttons/survival.png");
-  
-  sm_options = loadImage("menus/startmenu/buttons/options.png");
-  sm_help =loadImage("menus/startmenu/buttons/help.png");
-  sm_quit =loadImage("menus/startmenu/buttons/quit.png");
-
   // Start Menu Buttons Hovered
   sm_adventure_hovered = loadImage("menus/startmenu/buttons/hovered/adventure.png");
   sm_minigame_hovered = loadImage("menus/startmenu/buttons/hovered/minig.png");
@@ -112,7 +103,7 @@ function draw() {
   if (gameState === "start") {
     startMenu();
   }
-  else if (gameState === "adventureGame") {
+  else if (gameState === "adventureStart") {
     displayBackground();
   }
   //displayBackground();
@@ -120,9 +111,9 @@ function draw() {
   
 }
 
-function displayBackground(){
-  setup();
-  // image(bg_house, 0, 0); for the start of pan
+function displayBackground() {
+  
+  image(bg_house, 0, 0); // Start of pan
   image(bg_topFence,bg_house.width,0);
   image(bg_bottomTile,bg_house.width,bg_topFence.height+lawn.height);
   image(lawnend,bg_house.width+lawn.width,0);
@@ -131,9 +122,8 @@ function displayBackground(){
   // Only for camera pan
   // image(bg_road,bg_house.width+bg_topFence.width+lawnend.width, 0);
 
-
-  
 }
+  
 
 
 function displayMouseXY(){
@@ -143,15 +133,22 @@ function displayMouseXY(){
 }
 
 function startMenu() {
-  image(sm_background, 0, 0);
+  imageResize()
+  image(sm_background, (width-sm_background.width)/2, 0);
   startMenuHovered();
   
 }
 
+function imageResize(){
+  sm_background.resize(height/3*4,height);
+}
+
+
+
 
 function startMenuHovered() {
   // Adventure Button
-  if (mouseX >= 413 && mouseX <= 731 && mouseY > 94 && mouseY < 197) {
+  if (mouseX >= 413 && mouseX <= 731 && mouseY > 94 && mouseY < 176) {
     image(sm_adventure_hovered, 405, 64);
   }
   // Mini Game Button
@@ -182,8 +179,17 @@ function startMenuHovered() {
 
 
 function mouseReleased(){
-  if (mouseX >= 420 && mouseX <= 675 && mouseY > 351 && mouseY < 409) {
-    gameState = "adventureGame";
+  if (gameState === "start"){
+    if (mouseX >= 413 && mouseX <= 731 && mouseY > 94 && mouseY < 176) {
+      gameState = "adventureStart";
+    }
+    // Game modes part of needs to have
+    // if (mouseX >= 407 && mouseX <= 711 && mouseY > 178 && mouseY < 263){
+    //   gameState = "minigameStart";
+    if (mouseX >= 705 && mouseX <= 770 && mouseY > 470 && mouseY < 550) {
+      window.close();
+    }
   }
 }
-//function startAdventure(); {game = S}
+
+

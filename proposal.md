@@ -7,17 +7,18 @@ For our major project, Michael and I are planning to recreate the game "Plants v
 - Visually appealing game UI with css styling
 - Main adventure mode with at least one fully functioning level
     - Mimicking the real game, we want generated sunlight as currency to buy plants and a wave of randomly generated zombies 
-- Unique plants and zombies that are unlocked with the playthrough
+- Unique plants and zombies required in specific levels
 - Animations on sprites with iterations (plants, zombies, resources, interactions, etc)
 - An audio component with sound effects and background music
-- Functional lawnmowers, shovels, pause/resume buttons
 - Functional game message popups triggered upon conditions
 
 
 # Nice To Have List
 
+- Unlock different plants and zombies with the playthrough of the game
 - Special Game modes (conveyor mode, boss levels, pot-breaking, zombies vs. plant mode)
 - User name that customizes messages made within the game
+- Quality of life features like functional lawnmowers, shovels, pause/resume buttons
 - Add a way to store progress within the game 
 - Further styling (ie: highlight place where mouse is hovering)
 - Zen garden
@@ -25,4 +26,3 @@ For our major project, Michael and I are planning to recreate the game "Plants v
 - Endless mode
 - Loading screen
 
--bowling level
