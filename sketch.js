@@ -112,7 +112,7 @@ function draw() {
 }
 
 function displayBackground() {
-
+  
   image(bg_house, 0, 0); // Start of pan
   image(bg_topFence,bg_house.width,0);
   image(bg_bottomTile,bg_house.width,bg_topFence.height+lawn.height);
@@ -133,13 +133,14 @@ function displayMouseXY(){
 }
 
 function startMenu() {
-  image(sm_background, 0, 0);
+  imageResize()
+  image(sm_background, (width-sm_background.width)/2, 0);
   startMenuHovered();
   
 }
 
 function imageResize(){
-  sm_background.resize(height);
+  sm_background.resize(height/3*4,height);
 }
 
 
