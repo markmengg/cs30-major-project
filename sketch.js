@@ -125,35 +125,120 @@ function displayBackground() {
 }
 
 function startMenuHovered() {
+  //Adventure Button
+  // if (mouseX >= 806 && mouseX <= 1212 && mouseY > 98 && mouseY < 230) {
+  //   image(sm_adventure_hovered, 803,82);
+  // }
+  // // Mini Game Button
+  // if (mouseX >= 811 && mouseX <= 1208 && mouseY > 265 && mouseY < 360) {
+  //   image(sm_minigame_hovered, 802, 223);
+  // }
+  // // Puzzle Button
+  // if (mouseX >= 813 && mouseX <= 1170 && mouseY > 367 && mouseY < 440) {
+  //   image(sm_puzzle_hovered, 808, 334);
+  // }
+  // // Survival Button
+  // if (mouseX >= 820 && mouseX <= 1133 && mouseY > 429 && mouseY < 527) {
+  //   image(sm_survival_hovered, 815, 423);
+  // }
+  // // Options Button
+  // if (mouseX >= 1182 && mouseX <= 1307 && mouseY > 695 && mouseY < 821) {
+  //   image(sm_options_hovered, 1171, 661);
+  // }
+  // // Help Button
+  // if (mouseX >= 1328 && mouseX <= 1385 && mouseY > 724 && mouseY < 854) {
+  //   image(sm_help_hovered, 1305, 638);
+  // }
+  // // Quit Button
+  // if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
+  //   image(sm_quit_hovered, 1405,684);
+  // }
+
+
+
+
+
+
+
+  
+  let originalWidth = 1876;
+  let originalHeight = 925;
+
+  // Calculate scaling factors
+  let xPositionScale = windowWidth / originalWidth;
+  let yPositionScale = windowHeight / originalHeight;
+
   // Adventure Button
-  if (mouseX >= 806 && mouseX <= 1212 && mouseY > 98 && mouseY < 230) {
-    image(sm_adventure_hovered, 803,82);
+  if (
+    mouseX >= 946 * xPositionScale && 
+    mouseX <= 1451 * xPositionScale && 
+    mouseY >=  98* yPositionScale && 
+    mouseY <= 260 * yPositionScale
+  ) {
+    image(sm_adventure_hovered, 946 * xPositionScale, 98 * yPositionScale, sm_adventure_hovered.width * xPositionScale, sm_adventure_hovered.height * yPositionScale);
   }
+
   // Mini Game Button
-  if (mouseX >= 811 && mouseX <= 1208 && mouseY > 265 && mouseY < 360) {
-    image(sm_minigame_hovered, 802, 223);
+  if (
+    mouseX >= 945 * xPositionScale && 
+    mouseX <= 1428 * xPositionScale && 
+    mouseY >= 275 * yPositionScale && 
+    mouseY <= 383* yPositionScale
+  ) {
+    image(sm_minigame_hovered,  945* xPositionScale, 267 * yPositionScale, sm_minigame_hovered.width * xPositionScale, sm_minigame_hovered.height * yPositionScale);
   }
+
   // Puzzle Button
-  if (mouseX >= 813 && mouseX <= 1170 && mouseY > 367 && mouseY < 440) {
-    image(sm_puzzle_hovered, 808, 334);
+  if (
+    mouseX >= 959 * xPositionScale && 
+    mouseX <= 1387 * xPositionScale && 
+    mouseY >= 400 * yPositionScale && 
+    mouseY <= 489 * yPositionScale
+  ) {
+    image(sm_puzzle_hovered, 953 * xPositionScale, 397 * yPositionScale, sm_puzzle_hovered.width * xPositionScale, sm_puzzle_hovered.height * yPositionScale);
   }
+
   // Survival Button
-  if (mouseX >= 820 && mouseX <= 1133 && mouseY > 429 && mouseY < 527) {
-    image(sm_survival_hovered, 815, 423);
+  if (
+    mouseX >= 967 * xPositionScale && 
+    mouseX <= 1365 * xPositionScale && 
+    mouseY >= 511* yPositionScale && 
+    mouseY <= 594 * yPositionScale
+  ) {
+    image(sm_survival_hovered, 960 * xPositionScale, 505 * yPositionScale, sm_survival_hovered.width * xPositionScale, sm_survival_hovered.height * yPositionScale);
   }
+
   // Options Button
-  if (mouseX >= 1182 && mouseX <= 1307 && mouseY > 695 && mouseY < 821) {
-    image(sm_options_hovered, 1171, 661);
+  if (
+    mouseX >= 1182 * xPositionScale && 
+    mouseX <= 1307 * xPositionScale && 
+    mouseY >= 695 * yPositionScale && 
+    mouseY <= 821 * yPositionScale
+  ) {
+    image(sm_options_hovered, 1171 * xPositionScale, 661 * yPositionScale, sm_options_hovered.width * xPositionScale, sm_options_hovered.height * yPositionScale);
   }
+
   // Help Button
-  if (mouseX >= 1328 && mouseX <= 1385 && mouseY > 724 && mouseY < 854) {
-    image(sm_help_hovered, 1305, 638);
+  if (
+    mouseX >= 1328 * xPositionScale && 
+    mouseX <= 1385 * xPositionScale && 
+    mouseY >= 724 * yPositionScale && 
+    mouseY <= 854 * yPositionScale
+  ) {
+    image(sm_help_hovered, 1305 * xPositionScale, 638 * yPositionScale, sm_help_hovered.width * xPositionScale, sm_help_hovered.height * yPositionScale);
   }
+
   // Quit Button
-  if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
-    image(sm_quit_hovered, 1405,684);
+  if (
+    mouseX >= 1430 * xPositionScale && 
+    mouseX <= 1517 * xPositionScale && 
+    mouseY >= 699 * yPositionScale && 
+    mouseY <= 841 * yPositionScale
+  ) {
+    image(sm_quit_hovered, 1405 * xPositionScale, 684 * yPositionScale, sm_quit_hovered.width * xPositionScale, sm_quit_hovered.height * yPositionScale);
   }
 }
+
 
 function displayMouseXY() {
   textSize(24);
@@ -170,4 +255,9 @@ function mouseReleased() {
       window.close();
     }
   }
+}
+
+function windowResized() {
+  // Resize canvas when window is resized
+  resizeCanvas(windowWidth, windowHeight);
 }
