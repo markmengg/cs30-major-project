@@ -53,6 +53,8 @@ function preload() {
   sm_options_hovered = loadImage("menus/startmenu/buttons/hovered/options.png");
   sm_help_hovered = loadImage("menus/startmenu/buttons/hovered/help.png");
   sm_quit_hovered = loadImage("menus/startmenu/buttons/hovered/quit.png");
+
+  console.log("Images Loaded!");
 }
 
 
@@ -88,8 +90,10 @@ function imageResize() {
   sm_quit_hovered.resize(sm_quit_hovered.width * scalexHome, sm_quit_hovered.height * scaleyHome);
 
 
-  let scalexLawn = height / 3*4 / lawn.width + lawnmower.width + lawnend.width;
-  let scaleyLawn = height / lawn.height + bg_bottomTile.height + bg_topFence.height;
+
+
+  let scalexLawn = height / 3*4 / (lawn.width + lawnmower.width + lawnend.width);
+  let scaleyLawn = height / (lawn.height + bg_bottomTile.height + bg_topFence.height);
 
 
   bg_bottomTile.resize(bg_bottomTile.width * scalexLawn, bg_bottomTile.height * scaleyLawn);
@@ -107,13 +111,16 @@ function startMenu() {
 }
 
 function displayBackground() {
-  image(bg_house, 0, 0);
+  
   image(bg_topFence, bg_house.width, 0);
   image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
   image(lawnend, bg_house.width + lawn.width + lawnmower.width, bg_topFence.height);
   image(lawn, bg_house.width + lawnmower.width, bg_topFence.height);
   image(lawnmower,bg_house.width ,bg_topFence.height);
-  image(bg_road, bg_house.width+bg_topFence.width,0);
+
+
+  // image(bg_road, bg_house.width+bg_topFence.width,0);
+  // image(bg_house, 0, 0);
 
 }
 
