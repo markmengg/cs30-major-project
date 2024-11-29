@@ -43,6 +43,7 @@ function preload() {
   lawn = loadImage("bgImages/day/lawn.png");
   lawnend = loadImage("bgImages/day/lawnroadinbetween.png");
   lawnmower = loadImage("bgImages/day/lawnmower.png");
+  bg_road = loadImage("bgImages/day/road.png");
 
   sm_background = loadImage("menus/startmenu/bg.png");
   sm_adventure_hovered = loadImage("menus/startmenu/buttons/hovered/adventure.png");
@@ -85,6 +86,19 @@ function imageResize() {
   sm_options_hovered.resize(sm_options_hovered.width * scalexHome, sm_options_hovered.height * scaleyHome);
   sm_help_hovered.resize(sm_help_hovered.width * scalexHome, sm_help_hovered.height * scaleyHome);
   sm_quit_hovered.resize(sm_quit_hovered.width * scalexHome, sm_quit_hovered.height * scaleyHome);
+
+
+  let scalexLawn = height / 3*4 / lawn.width + lawnmower.width + lawnend.width;
+  let scaleyLawn = height / lawn.height + bg_bottomTile.height + bg_topFence.height;
+
+
+  bg_bottomTile.resize(bg_bottomTile.width * scalexLawn, bg_bottomTile.height * scaleyLawn);
+  bg_house.resize(bg_house.width * scalexLawn, bg_house.height * scaleyLawn);
+  bg_road.resize(bg_road.width * scalexLawn, bg_road.height * scaleyLawn);
+  bg_topFence.resize(bg_topFence.width * scalexLawn, bg_topFence.height * scaleyLawn);
+  lawnend.resize(lawnend.width * scalexLawn, lawnend.height * scaleyLawn);
+  lawn.resize(lawn.width * scalexLawn, lawn.height * scaleyLawn);
+  lawnmower.resize(lawnmower.width * scalexLawn, lawnmower.height * scaleyLawn);
 }
 
 function startMenu() {
@@ -96,9 +110,10 @@ function displayBackground() {
   image(bg_house, 0, 0);
   image(bg_topFence, bg_house.width, 0);
   image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
-  image(lawnend, bg_house.width + lawn.width+lawnmower.width, bg_topFence.height);
-  image(lawn, bg_house.width+lawnmower.width, bg_topFence.height);
+  image(lawnend, bg_house.width + lawn.width + lawnmower.width, bg_topFence.height);
+  image(lawn, bg_house.width + lawnmower.width, bg_topFence.height);
   image(lawnmower,bg_house.width ,bg_topFence.height);
+  image(bg_road, bg_house.width+bg_topFence.width,0);
 
 }
 
