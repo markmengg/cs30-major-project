@@ -14,6 +14,7 @@ let bg_topFence;
 let bg_bottomTile;
 let lawn;
 let lawnend;
+let lawnmower
 
 // Start Menu Images
 let sm_background;
@@ -41,6 +42,7 @@ function preload() {
   bg_bottomTile = loadImage("bgImages/day/bottomtile.png");
   lawn = loadImage("bgImages/day/lawn.png");
   lawnend = loadImage("bgImages/day/lawnroadinbetween.png");
+  lawnmower = loadImage("bgImages/day/lawnmower.png")
 
   sm_background = loadImage("menus/startmenu/bg.png");
   sm_adventure_hovered = loadImage("menus/startmenu/buttons/hovered/adventure.png");
@@ -93,8 +95,10 @@ function displayBackground() {
   image(bg_house, 0, 0);
   image(bg_topFence, bg_house.width, 0);
   image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
-  image(lawnend, bg_house.width + lawn.width, 0);
-  image(lawn, bg_house.width, bg_topFence.height);
+  image(lawnend, bg_house.width + lawn.width+lawnmower.width, bg_topFence.height);
+  image(lawn, bg_house.width+lawnmower.width, bg_topFence.height);
+  image(lawnmower,bg_house.width ,bg_topFence.height)
+
 }
 
 function startMenuHovered() {
