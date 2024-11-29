@@ -14,7 +14,7 @@ let bg_topFence;
 let bg_bottomTile;
 let lawn;
 let lawnend;
-let lawnmower
+let lawnmower;
 
 // Start Menu Images
 let sm_background;
@@ -42,7 +42,7 @@ function preload() {
   bg_bottomTile = loadImage("bgImages/day/bottomtile.png");
   lawn = loadImage("bgImages/day/lawn.png");
   lawnend = loadImage("bgImages/day/lawnroadinbetween.png");
-  lawnmower = loadImage("bgImages/day/lawnmower.png")
+  lawnmower = loadImage("bgImages/day/lawnmower.png");
 
   sm_background = loadImage("menus/startmenu/bg.png");
   sm_adventure_hovered = loadImage("menus/startmenu/buttons/hovered/adventure.png");
@@ -65,7 +65,8 @@ function draw() {
   background(220);
   if (gameState === "start") {
     startMenu();
-  } else if (gameState === "adventureStart") {
+  }
+  else if (gameState === "adventureStart") {
     displayBackground();
   }
   displayMouseXY(); // For debugging
@@ -75,7 +76,7 @@ function imageResize() {
   // Resize the background 
   let scalexHome = height/3*4 / sm_background.width;
   let scaleyHome = height / sm_background.height;
-  sm_background.resize((height / 3) * 4, height);
+  sm_background.resize(height / 3 * 4, height);
 
   sm_adventure_hovered.resize(sm_adventure_hovered.width * scalexHome, sm_adventure_hovered.height * scaleyHome);
   sm_minigame_hovered.resize(sm_minigame_hovered.width * scalexHome, sm_minigame_hovered.height * scaleyHome);
@@ -97,26 +98,26 @@ function displayBackground() {
   image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
   image(lawnend, bg_house.width + lawn.width+lawnmower.width, bg_topFence.height);
   image(lawn, bg_house.width+lawnmower.width, bg_topFence.height);
-  image(lawnmower,bg_house.width ,bg_topFence.height)
+  image(lawnmower,bg_house.width ,bg_topFence.height);
 
 }
 
 function startMenuHovered() {
   // Adventure Button
-  if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
-    image(sm_adventure_hovered, 946,98);
+  if (mouseX >= 806 && mouseX <= 1212 && mouseY > 98 && mouseY < 230) {
+    image(sm_adventure_hovered, 803,82);
   }
   // Mini Game Button
-  if (mouseX >= 945 && mouseX <= 1428 && mouseY > 275 && mouseY < 383) {
-    image(sm_minigame_hovered, 945, 267);
+  if (mouseX >= 811 && mouseX <= 1208 && mouseY > 265 && mouseY < 360) {
+    image(sm_minigame_hovered, 802, 223);
   }
   // Puzzle Button
-  if (mouseX >= 959 && mouseX <= 1387 && mouseY > 400 && mouseY < 489) {
-    image(sm_puzzle_hovered, 953, 397);
+  if (mouseX >= 813 && mouseX <= 1170 && mouseY > 367 && mouseY < 440) {
+    image(sm_puzzle_hovered, 808, 334);
   }
   // Survival Button
-  if (mouseX >= 967 && mouseX <= 1365 && mouseY > 511 && mouseY < 594) {
-    image(sm_survival_hovered, 960, 505);
+  if (mouseX >= 820 && mouseX <= 1133 && mouseY > 429 && mouseY < 527) {
+    image(sm_survival_hovered, 815, 423);
   }
   // Options Button
   if (mouseX >= 1182 && mouseX <= 1307 && mouseY > 695 && mouseY < 821) {
@@ -142,7 +143,8 @@ function mouseReleased() {
   if (gameState === "start") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
       gameState = "adventureStart";
-    } else if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
+    }
+    else if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
       window.close();
     }
   }
