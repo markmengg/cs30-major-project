@@ -4,7 +4,7 @@ For our major project, Michael and I are planning to recreate the game "Plants v
 
 # Needs To Have List
 
-- Visually appealing game UI with css styling
+- Visually appealing game UI
 - Main adventure mode with at least one fully functioning level
     - Mimicking the real game, we want generated sunlight as currency to buy plants and a wave of randomly generated zombies 
 - Unique plants and zombies required in specific levels
