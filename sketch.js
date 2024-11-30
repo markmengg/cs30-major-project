@@ -170,9 +170,9 @@ function startMenuHovered() {
 
   // Adventure Button
   if (
-    mouseX >= 946 * xPositionScale && 
+    mouseX >= 958 * xPositionScale && 
     mouseX <= 1451 * xPositionScale && 
-    mouseY >=  98* yPositionScale && 
+    mouseY >=  151* yPositionScale && 
     mouseY <= 260 * yPositionScale
   ) {
     image(sm_adventure_hovered, 946 * xPositionScale, 98 * yPositionScale, sm_adventure_hovered.width * xPositionScale, sm_adventure_hovered.height * yPositionScale);
@@ -180,20 +180,20 @@ function startMenuHovered() {
 
   // Mini Game Button
   if (
-    mouseX >= 945 * xPositionScale && 
-    mouseX <= 1428 * xPositionScale && 
+    mouseX >= 954 * xPositionScale && 
+    mouseX <= 1422 * xPositionScale && 
     mouseY >= 275 * yPositionScale && 
-    mouseY <= 383* yPositionScale
+    mouseY <= 403* yPositionScale
   ) {
     image(sm_minigame_hovered,  945* xPositionScale, 267 * yPositionScale, sm_minigame_hovered.width * xPositionScale, sm_minigame_hovered.height * yPositionScale);
   }
 
   // Puzzle Button
   if (
-    mouseX >= 959 * xPositionScale && 
-    mouseX <= 1387 * xPositionScale && 
-    mouseY >= 400 * yPositionScale && 
-    mouseY <= 489 * yPositionScale
+    mouseX >= 965 * xPositionScale && 
+    mouseX <= 1383 * xPositionScale && 
+    mouseY >= 403 * yPositionScale && 
+    mouseY <= 531 * yPositionScale
   ) {
     image(sm_puzzle_hovered, 953 * xPositionScale, 397 * yPositionScale, sm_puzzle_hovered.width * xPositionScale, sm_puzzle_hovered.height * yPositionScale);
   }
@@ -203,7 +203,7 @@ function startMenuHovered() {
     mouseX >= 967 * xPositionScale && 
     mouseX <= 1365 * xPositionScale && 
     mouseY >= 511* yPositionScale && 
-    mouseY <= 594 * yPositionScale
+    mouseY <= 634 * yPositionScale
   ) {
     image(sm_survival_hovered, 960 * xPositionScale, 505 * yPositionScale, sm_survival_hovered.width * xPositionScale, sm_survival_hovered.height * yPositionScale);
   }
