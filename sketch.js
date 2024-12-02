@@ -27,10 +27,20 @@ let sm_help_hovered;
 let sm_quit_hovered;
 
 // Grid (9x5)
-let grid = [];
-const COLS = 9;
-const ROWS = 5;
-let gameState = "start";
+const ROWS = 9;
+const COLUMNS = 5;
+let grid = [
+  ["0","0","0","0","0","0","0","0","0"],
+  ["0","0","0","0","0","0","0","0","0"],
+  ["0","0","0","0","0","0","0","0","0"],
+  ["0","0","0","0","0","0","0","0","0"],
+  ["0","0","0","0","0","0","0","0","0"]
+];
+
+// Game Mode
+let modeState = "start";
+// Game State
+let gameState = null;
 
 
 
@@ -64,10 +74,10 @@ function setup() {
 
 function draw() {
   background(220);
-  if (gameState === "start") {
+  if (modeState === "start") {
     startMenu();
   }
-  else if (gameState === "adventureStart") {
+  else if (modeState === "adventureStart") {
     displayBackground();
   }
   displayMouseXY(); // For debugging
@@ -245,9 +255,9 @@ function displayMouseXY() {
 }
 
 function mouseReleased() {
-  if (gameState === "start") {
+  if (modeState === "start") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
-      gameState = "adventureStart";
+      modeState = "adventureStart";
     }
     else if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
       window.close();
