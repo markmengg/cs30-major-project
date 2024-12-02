@@ -38,9 +38,20 @@ let grid = [
 ];
 
 // Game Mode
-let modeState = "start";
+let modeState = "menu";
+
 // Game State
-let gameState = null;
+let gameState = "pregame";
+
+// General Game/Logic Variables
+let scrollDirection = "forward";
+let scrollOffest = 0;
+let scrollMax = backgroundOffset+ tileSize * 9 - 500;
+let startScroll = false;
+let scrollTimer = 2000;
+let countdownTimer = 4;
+let readySetPlant = null;
+
 
 
 
@@ -74,11 +85,14 @@ function setup() {
 
 function draw() {
   background(220);
-  if (modeState === "start") {
+  if (modeState === "menu") {
     startMenu();
   }
-  else if (modeState === "adventureStart") {
+  else if (modeState === "adventure") {
     displayBackground();
+    // if (gameState === "start") {
+
+    // }
   }
   displayMouseXY(); // For debugging
 }
@@ -122,55 +136,41 @@ function startMenu() {
 
 function displayBackground() {
   
-  image(bg_topFence, bg_house.width, 0);
-  image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
-  image(lawnend, bg_house.width + lawn.width + lawnmower.width, bg_topFence.height);
-  image(lawn, bg_house.width + lawnmower.width, bg_topFence.height);
-  image(lawnmower,bg_house.width ,bg_topFence.height);
+  if (gameState === "pregame") {
+    image(lawn,scrollOffest + backgroundOffset, tileSize, tileSize*9,tileSize*5);
+    image(bg_house,scrollOffest + 0, 0, backgroundOffset, height);
+    image(bg_topFence,scrollOffest + backgroundOffset, 0, tileSize*9, tileSize);
+    image(bg_road,scrollOffest + backgroundOffset+ tileSize * 9, 0, width - (backgroundOffset+ tileSize * 9) + 500, height);
+    if (scrollTimer.expired()){
+      startscroll = true;
+    }
+    if (startscroll){
+      if (scrollDirection === "forward" && scrollMax <= scrollOffest + backgroundOffset+ tileSize * 9){
+        scrollOffest -= 8;  
+        if (scrollMax >= scrollOffest + backgroundOffset+ tileSize * 9){
+          scrollDirection = "backwards";
+        }
+      }
+      else if ( scrollDirection === "backwards" && scrollOffest <= 0){
+        scrollOffest+= 8;
+      }
+    }
+  }
 
-
-  // image(bg_road, bg_house.width+bg_topFence.width,0);
-  // image(bg_house, 0, 0);
+  else if (gameState === "start"){
+    image(bg_topFence, bg_house.width, 0);
+    image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
+    image(lawnend, bg_house.width + lawn.width + lawnmower.width, bg_topFence.height);
+    image(lawn, bg_house.width + lawnmower.width, bg_topFence.height);
+    image(lawnmower,bg_house.width ,bg_topFence.height);
+    image(bg_road, bg_house.width+bg_topFence.width,0);
+    image(bg_house, 0, 0);
+  }
 
 }
 
 function startMenuHovered() {
-  //Adventure Button
-  // if (mouseX >= 806 && mouseX <= 1212 && mouseY > 98 && mouseY < 230) {
-  //   image(sm_adventure_hovered, 803,82);
-  // }
-  // // Mini Game Button
-  // if (mouseX >= 811 && mouseX <= 1208 && mouseY > 265 && mouseY < 360) {
-  //   image(sm_minigame_hovered, 802, 223);
-  // }
-  // // Puzzle Button
-  // if (mouseX >= 813 && mouseX <= 1170 && mouseY > 367 && mouseY < 440) {
-  //   image(sm_puzzle_hovered, 808, 334);
-  // }
-  // // Survival Button
-  // if (mouseX >= 820 && mouseX <= 1133 && mouseY > 429 && mouseY < 527) {
-  //   image(sm_survival_hovered, 815, 423);
-  // }
-  // // Options Button
-  // if (mouseX >= 1182 && mouseX <= 1307 && mouseY > 695 && mouseY < 821) {
-  //   image(sm_options_hovered, 1171, 661);
-  // }
-  // // Help Button
-  // if (mouseX >= 1328 && mouseX <= 1385 && mouseY > 724 && mouseY < 854) {
-  //   image(sm_help_hovered, 1305, 638);
-  // }
-  // // Quit Button
-  // if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
-  //   image(sm_quit_hovered, 1405,684);
-  // }
-
-
-
-
-
-
-
-  
+   
   let originalWidth = 1876;
   let originalHeight = 925;
 
@@ -257,9 +257,10 @@ function displayMouseXY() {
 }
 
 function mouseReleased() {
-  if (modeState === "start") {
+  if (modeState === "menu") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
-      modeState = "adventureStart";
+      modeState = "adventure";
+      scrollTimer.start();
     }
     else if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
       window.close();
