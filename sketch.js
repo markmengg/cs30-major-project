@@ -74,11 +74,14 @@ function draw() {
 }
 
 function imageResize() {
-  // Resize the background 
-  let scalexHome = height/3*4 / sm_background.width;
+  // Resize the background to fit window height and adjusted width
+  let scalexHome = height / 3 * 4 / sm_background.width;
   let scaleyHome = height / sm_background.height;
-  sm_background.resize(height / 3 * 4, height);
+  
+  // Resizing the background
+  sm_background.resize(sm_background.width * scalexHome, sm_background.height * scaleyHome);
 
+  // Resize other images to maintain proportional scaling based on the background size
   sm_adventure_hovered.resize(sm_adventure_hovered.width * scalexHome, sm_adventure_hovered.height * scaleyHome);
   sm_minigame_hovered.resize(sm_minigame_hovered.width * scalexHome, sm_minigame_hovered.height * scaleyHome);
   sm_puzzle_hovered.resize(sm_puzzle_hovered.width * scalexHome, sm_puzzle_hovered.height * scaleyHome);
@@ -86,7 +89,6 @@ function imageResize() {
   sm_options_hovered.resize(sm_options_hovered.width * scalexHome, sm_options_hovered.height * scaleyHome);
   sm_help_hovered.resize(sm_help_hovered.width * scalexHome, sm_help_hovered.height * scaleyHome);
   sm_quit_hovered.resize(sm_quit_hovered.width * scalexHome, sm_quit_hovered.height * scaleyHome);
-
 
 
 
@@ -173,7 +175,7 @@ function startMenuHovered() {
     mouseY >=  151* yPositionScale && 
     mouseY <= 260 * yPositionScale
   ) {
-    image(sm_adventure_hovered, 946 * xPositionScale, 98 * yPositionScale, sm_adventure_hovered.width * xPositionScale, sm_adventure_hovered.height * yPositionScale);
+    image(sm_adventure_hovered, 946 * xPositionScale, 98 * yPositionScale);
   }
 
   // Mini Game Button
@@ -183,7 +185,7 @@ function startMenuHovered() {
     mouseY >= 275 * yPositionScale && 
     mouseY <= 403* yPositionScale
   ) {
-    image(sm_minigame_hovered,  945* xPositionScale, 267 * yPositionScale, sm_minigame_hovered.width * xPositionScale, sm_minigame_hovered.height * yPositionScale);
+    image(sm_minigame_hovered,  945* xPositionScale, 267 * yPositionScale);
   }
 
   // Puzzle Button
@@ -193,7 +195,7 @@ function startMenuHovered() {
     mouseY >= 403 * yPositionScale && 
     mouseY <= 531 * yPositionScale
   ) {
-    image(sm_puzzle_hovered, 953 * xPositionScale, 397 * yPositionScale, sm_puzzle_hovered.width * xPositionScale, sm_puzzle_hovered.height * yPositionScale);
+    image(sm_puzzle_hovered, 953 * xPositionScale, 397 * yPositionScale);
   }
 
   // Survival Button
@@ -203,7 +205,7 @@ function startMenuHovered() {
     mouseY >= 511* yPositionScale && 
     mouseY <= 634 * yPositionScale
   ) {
-    image(sm_survival_hovered, 960 * xPositionScale, 505 * yPositionScale, sm_survival_hovered.width * xPositionScale, sm_survival_hovered.height * yPositionScale);
+    image(sm_survival_hovered, 960 * xPositionScale, 505 * yPositionScale);
   }
 
   // Options Button
@@ -213,7 +215,7 @@ function startMenuHovered() {
     mouseY >= 695 * yPositionScale && 
     mouseY <= 821 * yPositionScale
   ) {
-    image(sm_options_hovered, 1171 * xPositionScale, 661 * yPositionScale, sm_options_hovered.width * xPositionScale, sm_options_hovered.height * yPositionScale);
+    image(sm_options_hovered, 1171 * xPositionScale, 661 * yPositionScale);
   }
 
   // Help Button
@@ -223,7 +225,7 @@ function startMenuHovered() {
     mouseY >= 724 * yPositionScale && 
     mouseY <= 854 * yPositionScale
   ) {
-    image(sm_help_hovered, 1305 * xPositionScale, 638 * yPositionScale, sm_help_hovered.width * xPositionScale, sm_help_hovered.height * yPositionScale);
+    image(sm_help_hovered, 1305 * xPositionScale, 638 * yPositionScale);
   }
 
   // Quit Button
@@ -233,7 +235,7 @@ function startMenuHovered() {
     mouseY >= 699 * yPositionScale && 
     mouseY <= 841 * yPositionScale
   ) {
-    image(sm_quit_hovered, 1405 * xPositionScale, 684 * yPositionScale, sm_quit_hovered.width * xPositionScale, sm_quit_hovered.height * yPositionScale);
+    image(sm_quit_hovered, 1405 * xPositionScale, 684 * yPositionScale);
   }
 }
 
