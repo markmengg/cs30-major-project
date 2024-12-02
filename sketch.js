@@ -53,8 +53,6 @@ function preload() {
   sm_options_hovered = loadImage("menus/startmenu/buttons/hovered/options.png");
   sm_help_hovered = loadImage("menus/startmenu/buttons/hovered/help.png");
   sm_quit_hovered = loadImage("menus/startmenu/buttons/hovered/quit.png");
-
-  console.log("Images Loaded!");
 }
 
 
