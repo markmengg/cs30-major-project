@@ -5,6 +5,10 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
+
+let cameraPanTimer
+
+
 // Images
 
 // Background Images
@@ -79,9 +83,14 @@ function draw() {
   }
   else if (modeState === "adventureStart") {
     displayBackground();
+    cameraPanTimer = millis()
+    // cameraPan()
   }
   displayMouseXY(); // For debugging
 }
+
+// function cameraPan
+
 
 function imageResize() {
   // Resize the background to fit window height and adjusted width
@@ -135,42 +144,7 @@ function displayBackground() {
 }
 
 function startMenuHovered() {
-  //Adventure Button
-  // if (mouseX >= 806 && mouseX <= 1212 && mouseY > 98 && mouseY < 230) {
-  //   image(sm_adventure_hovered, 803,82);
-  // }
-  // // Mini Game Button
-  // if (mouseX >= 811 && mouseX <= 1208 && mouseY > 265 && mouseY < 360) {
-  //   image(sm_minigame_hovered, 802, 223);
-  // }
-  // // Puzzle Button
-  // if (mouseX >= 813 && mouseX <= 1170 && mouseY > 367 && mouseY < 440) {
-  //   image(sm_puzzle_hovered, 808, 334);
-  // }
-  // // Survival Button
-  // if (mouseX >= 820 && mouseX <= 1133 && mouseY > 429 && mouseY < 527) {
-  //   image(sm_survival_hovered, 815, 423);
-  // }
-  // // Options Button
-  // if (mouseX >= 1182 && mouseX <= 1307 && mouseY > 695 && mouseY < 821) {
-  //   image(sm_options_hovered, 1171, 661);
-  // }
-  // // Help Button
-  // if (mouseX >= 1328 && mouseX <= 1385 && mouseY > 724 && mouseY < 854) {
-  //   image(sm_help_hovered, 1305, 638);
-  // }
-  // // Quit Button
-  // if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
-  //   image(sm_quit_hovered, 1405,684);
-  // }
 
-
-
-
-
-
-
-  
   let originalWidth = 1876;
   let originalHeight = 925;
 
