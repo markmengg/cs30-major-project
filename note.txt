@@ -1,2 +1,3 @@
 fix reposition of option/help/quit buttons
+fix zombie spawn
 

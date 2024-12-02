@@ -167,6 +167,10 @@ function displayBackground() {
     image(bg_house, 0, 0);
   }
 
+//   image(bg_road, bg_house.width+bg_topFence.width,0);
+//   image(bg_house, 0, 0);
+// >>>>>>> ea2dd7a48bbc32d0be2e950ddecfed4a9ff4335d
+
 }
 
 function startMenuHovered() {
