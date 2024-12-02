@@ -1,8 +1,2 @@
-image(bg_road,bg_house.width+bg_topFence.width+lawnend.width, 0)
-
-I leave this // for now its just for when the camera pan to show zombies, it wont actually show in game
-
-the lawnroadinbetween is the space where you see like the zombies feet or whatever wbut they havent step on lawn yet it will be shown in the actualy game
-
-I ll crop start menu and put png here later
+fix reposition of option/help/quit buttons
 
