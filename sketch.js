@@ -119,8 +119,8 @@ function displayBackground() {
   image(lawnmower,bg_house.width ,bg_topFence.height);
 
 
-  // image(bg_road, bg_house.width+bg_topFence.width,0);
-  // image(bg_house, 0, 0);
+  image(bg_road, bg_house.width+bg_topFence.width,0);
+  image(bg_house, 0, 0);
 
 }
 
