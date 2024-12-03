@@ -4,6 +4,8 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
+let startTime;
+let duration = 5000; // 2 seconds
 
 
 
@@ -83,7 +85,7 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   imageResize(); // Resize all images once during setup
   xPositionScale = windowWidth/originalWidth
-  yPositionScale = windowHeight/originalHeight
+  yPositionScale = windowHeight/originalHeight  
 }
 
 function draw() {
@@ -92,14 +94,36 @@ function draw() {
     startMenu();
   }
   else if (modeState === "adventureStart") {
-    displayBackground();
+    
     cameraPanTimer = millis()
-    // cameraPan()
+    cameraPan()
   }
   displayMouseXY(); // For debugging
 }
 
-// function cameraPan
+function cameraPan() {
+  let startX = (width - sm_background.width) / 2  // Starting X position (right)
+  let endX = -100; // Ending X position (left)
+  if (!startTime) {
+    startTime = millis(); // Record the start time
+  }
+
+  let elapsedTime = millis() - startTime;
+  let t = constrain(elapsedTime / duration, 0, 1); // Normalize time between 0 and 1
+
+  // Interpolate from startX to endX
+  let currentX = lerp(startX, endX, t); 
+
+  push();
+  translate(currentX, 0); // Apply camera pan
+  displayBackground();
+  pop();
+
+  // Continue the animation until it reaches the end point
+  if (t < 1) {
+    requestAnimationFrame(cameraPan);
+  }
+} 
 
 
 function imageResize() {
