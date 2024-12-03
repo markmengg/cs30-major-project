@@ -6,6 +6,14 @@
 // - describe what you did to take this project "above and beyond"
 
 
+
+let originalWidth = 1876;
+let originalHeight = 925;
+
+// Calculate scaling factors
+let xPositionScale
+let yPositionScale
+
 let cameraPanTimer
 
 
@@ -74,6 +82,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   imageResize(); // Resize all images once during setup
+  xPositionScale = windowWidth/originalWidth
+  yPositionScale = windowHeight/originalHeight
 }
 
 function draw() {
@@ -145,12 +155,7 @@ function displayBackground() {
 
 function startMenuHovered() {
 
-  let originalWidth = 1876;
-  let originalHeight = 925;
 
-  // Calculate scaling factors
-  let xPositionScale = windowWidth / originalWidth;
-  let yPositionScale = windowHeight / originalHeight;
 
   // Adventure Button
   if (
@@ -199,7 +204,7 @@ function startMenuHovered() {
     mouseY >= 695 * yPositionScale && 
     mouseY <= 821 * yPositionScale
   ) {
-    image(sm_options_hovered, 1171 * xPositionScale, 661 * yPositionScale);
+    image(sm_options_hovered, 1171   * xPositionScale, 661 * yPositionScale);
   }
 
   // Help Button
