@@ -1,6 +1,3 @@
-// Plants vs. Zombies
-// Mark Meng and Michael Zhu
-// Date
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
@@ -13,10 +10,10 @@ let originalWidth = 1876;
 let originalHeight = 925;
 
 // Calculate scaling factors
-let xPositionScale;
-let yPositionScale;
+let xPositionScale
+let yPositionScale
 
-let cameraPanTimer;
+let cameraPanTimer
 
 
 // Images
@@ -52,20 +49,9 @@ let grid = [
 ];
 
 // Game Mode
-let modeState = "menu";
-
+let modeState = "start";
 // Game State
-let gameState = "pregame";
-
-// General Game/Logic Variables
-let scrollDirection = "forward";
-let scrollOffest = 0;
-let scrollMax = backgroundOffset+ tileSize * 9 - 500;
-let startScroll = false;
-let scrollTimer = 2000;
-let countdownTimer = 4;
-let readySetPlant = null;
-
+let gameState = null;
 
 
 
@@ -95,34 +81,29 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   imageResize(); // Resize all images once during setup
-  xPositionScale = windowWidth/originalWidth;
-  yPositionScale = windowHeight/originalHeight;  
+  xPositionScale = windowWidth/originalWidth
+
+  yPositionScale = windowHeight/originalHeight  
 }
+
 
 function draw() {
   background(220);
-  if (modeState === "menu") {
+  if (modeState === "start") {
     startMenu();
   }
-
-  else if (modeState === "adventure") {
-    displayBackground();
-    // if (gameState === "start") {
-
-    // }
-  }
-
-  else if (gameState === "adventureStart") {
+  else if (modeState === "adventureStart") {
+ 
     
-    cameraPanTimer = millis();
-    cameraPan();
-
+    cameraPanTimer = millis()
+    // cameraPan()
+    cameraPan()
   }
   displayMouseXY(); // For debugging
 }
 
 function cameraPan() {
-  let startX = (width - sm_background.width) / 2;  // Starting X position (right)
+  let startX = (width - sm_background.width) / 2  // Starting X position (right)
   let endX = -100; // Ending X position (left)
   if (!startTime) {
     startTime = millis(); // Record the start time
@@ -144,6 +125,10 @@ function cameraPan() {
     requestAnimationFrame(cameraPan);
   }
 } 
+
+
+
+
 
 
 function imageResize() {
@@ -185,51 +170,19 @@ function startMenu() {
 
 function displayBackground() {
   
-  if (gameState === "pregame") {
-    image(lawn,scrollOffest + backgroundOffset, tileSize, tileSize*9,tileSize*5);
-    image(bg_house,scrollOffest + 0, 0, backgroundOffset, height);
-    image(bg_topFence,scrollOffest + backgroundOffset, 0, tileSize*9, tileSize);
-    image(bg_road,scrollOffest + backgroundOffset+ tileSize * 9, 0, width - (backgroundOffset+ tileSize * 9) + 500, height);
-    if (scrollTimer.expired()){
-      startscroll = true;
-    }
-    if (startscroll){
-      if (scrollDirection === "forward" && scrollMax <= scrollOffest + backgroundOffset+ tileSize * 9){
-        scrollOffest -= 8;  
-        if (scrollMax >= scrollOffest + backgroundOffset+ tileSize * 9){
-          scrollDirection = "backwards";
-        }
-      }
-      else if ( scrollDirection === "backwards" && scrollOffest <= 0){
-        scrollOffest+= 8;
-      }
-    }
-  }
+  image(bg_topFence, bg_house.width, 0);
+  image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
+  image(lawnend, bg_house.width + lawn.width + lawnmower.width, bg_topFence.height);
+  image(lawn, bg_house.width + lawnmower.width, bg_topFence.height);
+  image(lawnmower,bg_house.width ,bg_topFence.height);
 
-  else if (gameState === "start"){
-    image(bg_topFence, bg_house.width, 0);
-    image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
-    image(lawnend, bg_house.width + lawn.width + lawnmower.width, bg_topFence.height);
-    image(lawn, bg_house.width + lawnmower.width, bg_topFence.height);
-    image(lawnmower,bg_house.width ,bg_topFence.height);
-    image(bg_road, bg_house.width+bg_topFence.width,0);
-    image(bg_house, 0, 0);
-  }
 
-  //   image(bg_road, bg_house.width+bg_topFence.width,0);
-  //   image(bg_house, 0, 0);
-  // >>>>>>> ea2dd7a48bbc32d0be2e950ddecfed4a9ff4335d
+  image(bg_road, bg_house.width+bg_topFence.width,0);
+  image(bg_house, 0, 0);
 
 }
 
 function startMenuHovered() {
-
-  let originalWidth = 1876;
-  let originalHeight = 925;
-
-  // Calculate scaling factors
-  let xPositionScale = windowWidth / originalWidth;
-  let yPositionScale = windowHeight / originalHeight;
 
 
 
@@ -312,10 +265,9 @@ function displayMouseXY() {
 }
 
 function mouseReleased() {
-  if (modeState === "menu") {
+  if (modeState === "start") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
-      modeState = "adventure";
-      scrollTimer.start();
+      modeState = "adventureStart";
     }
     else if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
       window.close();
