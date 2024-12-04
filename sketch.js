@@ -4,6 +4,20 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
+let startTime;
+let duration = 5000; // 2 seconds
+
+
+
+let originalWidth = 1876;
+let originalHeight = 925;
+
+// Calculate scaling factors
+let xPositionScale;
+let yPositionScale;
+
+let cameraPanTimer;
+
 
 // Images
 
@@ -81,6 +95,8 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   imageResize(); // Resize all images once during setup
+  xPositionScale = windowWidth/originalWidth;
+  yPositionScale = windowHeight/originalHeight;  
 }
 
 function draw() {
@@ -88,14 +104,47 @@ function draw() {
   if (modeState === "menu") {
     startMenu();
   }
+
   else if (modeState === "adventure") {
     displayBackground();
     // if (gameState === "start") {
 
     // }
   }
+
+  else if (gameState === "adventureStart") {
+    
+    cameraPanTimer = millis();
+    cameraPan();
+
+  }
   displayMouseXY(); // For debugging
 }
+
+function cameraPan() {
+  let startX = (width - sm_background.width) / 2;  // Starting X position (right)
+  let endX = -100; // Ending X position (left)
+  if (!startTime) {
+    startTime = millis(); // Record the start time
+  }
+
+  let elapsedTime = millis() - startTime;
+  let t = constrain(elapsedTime / duration, 0, 1); // Normalize time between 0 and 1
+
+  // Interpolate from startX to endX
+  let currentX = lerp(startX, endX, t); 
+
+  push();
+  translate(currentX, 0); // Apply camera pan
+  displayBackground();
+  pop();
+
+  // Continue the animation until it reaches the end point
+  if (t < 1) {
+    requestAnimationFrame(cameraPan);
+  }
+} 
+
 
 function imageResize() {
   // Resize the background to fit window height and adjusted width
@@ -167,20 +216,22 @@ function displayBackground() {
     image(bg_house, 0, 0);
   }
 
-//   image(bg_road, bg_house.width+bg_topFence.width,0);
-//   image(bg_house, 0, 0);
-// >>>>>>> ea2dd7a48bbc32d0be2e950ddecfed4a9ff4335d
+  //   image(bg_road, bg_house.width+bg_topFence.width,0);
+  //   image(bg_house, 0, 0);
+  // >>>>>>> ea2dd7a48bbc32d0be2e950ddecfed4a9ff4335d
 
 }
 
 function startMenuHovered() {
-   
+
   let originalWidth = 1876;
   let originalHeight = 925;
 
   // Calculate scaling factors
   let xPositionScale = windowWidth / originalWidth;
   let yPositionScale = windowHeight / originalHeight;
+
+
 
   // Adventure Button
   if (
@@ -229,7 +280,7 @@ function startMenuHovered() {
     mouseY >= 695 * yPositionScale && 
     mouseY <= 821 * yPositionScale
   ) {
-    image(sm_options_hovered, 1171 * xPositionScale, 661 * yPositionScale);
+    image(sm_options_hovered, 1171   * xPositionScale, 661 * yPositionScale);
   }
 
   // Help Button
