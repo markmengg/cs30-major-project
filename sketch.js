@@ -1,8 +1,8 @@
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// lerp, requestanimation
 let startTime;
-let duration = 5000; // 2 seconds
+let duration = 2300; // 2 seconds
 
 
 
@@ -10,10 +10,10 @@ let originalWidth = 1876;
 let originalHeight = 925;
 
 // Calculate scaling factors
-let xPositionScale
-let yPositionScale
+let xPositionScale;
+let yPositionScale;
 
-let cameraPanTimer
+let cameraPanTimer;
 
 
 // Images
@@ -49,10 +49,13 @@ let grid = [
 ];
 
 // Game Mode
-let modeState = "start";
+let modeState = "menu";
 // Game State
-let gameState = null;
+let gameState = "pregame";
 
+
+// Game Logic Variables
+let cameraPanState = "forward";
 
 
 
@@ -81,39 +84,50 @@ function preload() {
 function setup() {
   createCanvas(windowWidth, windowHeight);
   imageResize(); // Resize all images once during setup
-  xPositionScale = windowWidth/originalWidth
+  xPositionScale = windowWidth/originalWidth;
 
-  yPositionScale = windowHeight/originalHeight  
+  yPositionScale = windowHeight/originalHeight;  
 }
 
 
 function draw() {
   background(220);
-  if (modeState === "start") {
+  if (modeState === "menu") {
     startMenu();
   }
-  else if (modeState === "adventureStart") {
- 
+  if (modeState === "adventure") {
+    if (gameState === "pregame"){
+      cameraPanTimer = millis();
+      // cameraPan()
+      if (cameraPanState === "forward") {
+        cameraPan((width - sm_background.width) / 2, -bg_road.width);
+        if (cameraPanTimer + duration - millis() === 0){
+          cameraPanState = "backward";
+        }
+      }
+      if (cameraPanState === "backward") {
+        cameraPanTimer = millis();
+        cameraPan(-bg_road.width, (width - sm_background.width) / 2);
+      }
     
-    cameraPanTimer = millis()
-    // cameraPan()
-    cameraPan()
+    }
   }
   displayMouseXY(); // For debugging
 }
 
-function cameraPan() {
-  let startX = (width - sm_background.width) / 2  // Starting X position (right)
-  let endX = -100; // Ending X position (left)
+
+
+function cameraPan(startX,endX) {
+
   if (!startTime) {
     startTime = millis(); // Record the start time
   }
 
   let elapsedTime = millis() - startTime;
-  let t = constrain(elapsedTime / duration, 0, 1); // Normalize time between 0 and 1
+  let time = constrain(elapsedTime / duration, 0, 1); // Normalize time between 0 and 1
 
   // Interpolate from startX to endX
-  let currentX = lerp(startX, endX, t); 
+  let currentX = lerp(startX, endX, time); 
 
   push();
   translate(currentX, 0); // Apply camera pan
@@ -121,9 +135,10 @@ function cameraPan() {
   pop();
 
   // Continue the animation until it reaches the end point
-  if (t < 1) {
+  if (time < 1) {
     requestAnimationFrame(cameraPan);
   }
+
 } 
 
 
@@ -265,9 +280,9 @@ function displayMouseXY() {
 }
 
 function mouseReleased() {
-  if (modeState === "start") {
+  if (modeState === "menu") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
-      modeState = "adventureStart";
+      modeState = "adventure";
     }
     else if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
       window.close();
