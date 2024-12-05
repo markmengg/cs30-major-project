@@ -1,8 +1,52 @@
 //
 // Extra for Experts:
 // lerp, requestanimation
+class Camera{
+  constructor(startX, endX, duration) {
+    this.startX = startX;  // Initial start position of the camera
+    this.endX = endX;      // Final position of the camera
+    this.duration = duration; // Duration of the camera pan
+    this.startTime = null;  // To store the start time of the animation
+  }
+
+  pan() {
+    if (this.startTime === null) {
+      this.startTime = millis(); // Record the start time
+    }
+
+    let elapsedTime = millis() - this.startTime;
+    let time = constrain(elapsedTime / this.duration, 0, 1); // Normalize time between 0 and 1
+
+
+    let currentX = lerp(this.startX, this.endX, time);
+
+    push();
+    translate(currentX, 0); 
+    displayBackground();   
+
+    if (time < 1) {
+      requestAnimationFrame(() => this.pan());  
+    }
+  }
+
+
+  reset() {
+    this.startTime = null;
+    
+  }
+}
+
+let myCamera;
+let duration = 2300;  
+
+
+
+
+
+
+
 let startTime;
-let duration = 2300; // 2 seconds
+
 
 
 
@@ -85,8 +129,8 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   imageResize(); // Resize all images once during setup
   xPositionScale = windowWidth/originalWidth;
-
   yPositionScale = windowHeight/originalHeight;  
+  pregameCameraFWD = new Camera((width-sm_background.width)/2, -bg_road.width, duration); 
 }
 
 
@@ -97,49 +141,37 @@ function draw() {
   }
   if (modeState === "adventure") {
     if (gameState === "pregame"){
-      cameraPanTimer = millis();
-      // cameraPan()
-      if (cameraPanState === "forward") {
-        cameraPan((width - sm_background.width) / 2, -bg_road.width);
-        if (cameraPanTimer + duration - millis() === 0){
-          cameraPanState = "backward";
-        }
-      }
-      if (cameraPanState === "backward") {
-        cameraPanTimer = millis();
-        cameraPan(-bg_road.width, (width - sm_background.width) / 2);
-      }
-    
+      pregameCameraFWD.pan();
     }
+    displayMouseXY(); // For debugging
   }
-  displayMouseXY(); // For debugging
 }
 
 
 
-function cameraPan(startX,endX) {
+// function cameraPan(startX,endX) {
 
-  if (!startTime) {
-    startTime = millis(); // Record the start time
-  }
+//   if (!startTime) {
+//     startTime = millis(); // Record the start time
+//   }
 
-  let elapsedTime = millis() - startTime;
-  let time = constrain(elapsedTime / duration, 0, 1); // Normalize time between 0 and 1
+//   let elapsedTime = millis() - startTime;
+//   let time = constrain(elapsedTime / duration, 0, 1); // Normalize time between 0 and 1
 
-  // Interpolate from startX to endX
-  let currentX = lerp(startX, endX, time); 
+//   // Interpolate from startX to endX
+//   let currentX = lerp(startX, endX, time); 
 
-  push();
-  translate(currentX, 0); // Apply camera pan
-  displayBackground();
-  pop();
+//   push();
+//   translate(currentX, 0); // Apply camera pan
+//   displayBackground();
+//   pop();
 
-  // Continue the animation until it reaches the end point
-  if (time < 1) {
-    requestAnimationFrame(cameraPan);
-  }
+//   // Continue the animation until it reaches the end point
+//   if (time < 1) {
+//     requestAnimationFrame(cameraPan);
+//   }
 
-} 
+// } 
 
 
 
