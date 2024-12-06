@@ -27,6 +27,9 @@ class Camera{
     if (time < 1) {
       requestAnimationFrame(() => this.pan());  
     }
+    else{
+      gameState = "null"
+    }
   }
 
 
@@ -130,7 +133,8 @@ function setup() {
   imageResize(); // Resize all images once during setup
   xPositionScale = windowWidth/originalWidth;
   yPositionScale = windowHeight/originalHeight;  
-  pregameCameraFWD = new Camera((width-sm_background.width)/2, -bg_road.width, duration); 
+  pregameCameraFWD = new Camera((width-sm_background.width)/2, -(bg_road.width), duration); 
+  pregameCameraBWD = new Camera(-(bg_road.width),(width-sm_background.width)/2-bg_house.width, duration);
 }
 
 
@@ -142,6 +146,9 @@ function draw() {
   if (modeState === "adventure") {
     if (gameState === "pregame"){
       pregameCameraFWD.pan();
+    }
+    else{
+      pregameCameraBWD.pan()
     }
     displayMouseXY(); // For debugging
   }
