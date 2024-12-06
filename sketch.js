@@ -13,22 +13,24 @@ class Camera{
     if (this.startTime === null) {
       this.startTime = millis(); // Record the start time
     }
-
+  
     let elapsedTime = millis() - this.startTime;
     let time = constrain(elapsedTime / this.duration, 0, 1); // Normalize time between 0 and 1
-
-
+  
     let currentX = lerp(this.startX, this.endX, time);
-
+  
     push();
-    translate(currentX, 0); 
-    displayBackground();   
-
+    translate(currentX, 0);
+    displayBackground();
+  
     if (time < 1) {
-      requestAnimationFrame(() => this.pan());  
+      requestAnimationFrame(() => this.pan());
     }
-    else{
-      gameState = "null"
+    else {
+      if (gameState === "pregame") {
+        gameState = "countdown"; // Change game state after pan completes
+        countdownStartTime = null; // Reset countdown timer
+      }
     }
   }
 
@@ -40,7 +42,7 @@ class Camera{
 }
 
 let myCamera;
-let duration = 2300;  
+let duration = 1500;  
 
 
 
@@ -84,6 +86,14 @@ let sm_options_hovered;
 let sm_help_hovered;
 let sm_quit_hovered;
 
+
+// Game Message Images
+let readyMessage;
+let setMessage;
+let plantMessage;
+
+
+
 // Grid (9x5)
 const ROWS = 9;
 const COLUMNS = 5;
@@ -103,6 +113,11 @@ let gameState = "pregame";
 
 // Game Logic Variables
 let cameraPanState = "forward";
+
+// General Variables
+let countdownMessages = ["ready", "set", "plant"];
+let countdownIndex = 0;
+let countdownStartTime = null;
 
 
 
@@ -124,6 +139,10 @@ function preload() {
   sm_options_hovered = loadImage("menus/startmenu/buttons/hovered/options.png");
   sm_help_hovered = loadImage("menus/startmenu/buttons/hovered/help.png");
   sm_quit_hovered = loadImage("menus/startmenu/buttons/hovered/quit.png");
+
+  readyMessage = loadImage("Game Messages/ready.png");
+  setMessage = loadImage("Game Messages/set.png");
+  plantMessage = loadImage("Game Messages/plant.png");
 }
 
 
@@ -133,52 +152,32 @@ function setup() {
   imageResize(); // Resize all images once during setup
   xPositionScale = windowWidth/originalWidth;
   yPositionScale = windowHeight/originalHeight;  
-  pregameCameraFWD = new Camera((width-sm_background.width)/2, -(bg_road.width), duration); 
-  pregameCameraBWD = new Camera(-(bg_road.width),(width-sm_background.width)/2-bg_house.width, duration);
+  pregameCameraFWD = new Camera((width-sm_background.width)/2, -bg_road.width, duration); 
+  pregameCameraBWD = new Camera(-bg_road.width,(width-sm_background.width)/2-bg_house.width, duration);
 }
 
 
 function draw() {
   background(220);
+
+  // Ensure sides are black if needed
+  cutSides();
+
+  // Handle different game states
   if (modeState === "menu") {
     startMenu();
   }
   if (modeState === "adventure") {
-    if (gameState === "pregame"){
+    if (gameState === "pregame") {
       pregameCameraFWD.pan();
+    } 
+    else {
+      pregameCameraBWD.pan();
+      readySetPlant();
     }
-    else{
-      pregameCameraBWD.pan()
-    }
-    displayMouseXY(); // For debugging
+    displayMouseXY();
   }
 }
-
-
-
-// function cameraPan(startX,endX) {
-
-//   if (!startTime) {
-//     startTime = millis(); // Record the start time
-//   }
-
-//   let elapsedTime = millis() - startTime;
-//   let time = constrain(elapsedTime / duration, 0, 1); // Normalize time between 0 and 1
-
-//   // Interpolate from startX to endX
-//   let currentX = lerp(startX, endX, time); 
-
-//   push();
-//   translate(currentX, 0); // Apply camera pan
-//   displayBackground();
-//   pop();
-
-//   // Continue the animation until it reaches the end point
-//   if (time < 1) {
-//     requestAnimationFrame(cameraPan);
-//   }
-
-// } 
 
 
 
@@ -223,7 +222,7 @@ function startMenu() {
 }
 
 function displayBackground() {
-  
+
   image(bg_topFence, bg_house.width, 0);
   image(bg_bottomTile, bg_house.width, bg_topFence.height + lawn.height);
   image(lawnend, bg_house.width + lawn.width + lawnmower.width, bg_topFence.height);
@@ -323,7 +322,7 @@ function mouseReleased() {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
       modeState = "adventure";
     }
-    else if (mouseX >= 1430 && mouseX <= 1517 && mouseY > 699 && mouseY < 841) {
+    else if (mouseX >= 1430 * xPositionScale && mouseX <= 1517 * xPositionScale && mouseY > 699 * yPositionScale && mouseY < 841 * yPositionScale) {
       window.close();
     }
   }
@@ -332,4 +331,42 @@ function mouseReleased() {
 function windowResized() {
   // Resize canvas when window is resized
   resizeCanvas(windowWidth, windowHeight);
+}
+
+
+function readySetPlant() {
+  if (countdownStartTime === null) {
+    countdownStartTime = millis();
+  }
+
+  let elapsedTime = millis() - countdownStartTime;
+
+  if (elapsedTime >= 2000) {
+    let messageDisplayTime = 1000;
+    let messageIndex = Math.floor((elapsedTime - 2000) / messageDisplayTime);
+
+    if (messageIndex < countdownMessages.length) {
+      let currentMessage = countdownMessages[messageIndex];
+      if (currentMessage === "ready") {
+        image(readyMessage, (width / 2 - readyMessage.width / 2 + 125) * xPositionScale, (height / 2 - readyMessage.height / 2 - 25) * yPositionScale);
+      }
+      else if (currentMessage === "set") {
+        image(setMessage, (width / 2 - setMessage.width / 2 + 125) * xPositionScale, (height / 2 - setMessage.height / 2 - 25) * yPositionScale);
+      }
+      else if (currentMessage === "plant") {
+        image(plantMessage, (width / 2 - plantMessage.width / 2 + 125) * xPositionScale, (height / 2 - plantMessage.height / 2 - 25) * yPositionScale);
+      }
+    }
+    else {
+      gameState = "gameStart";
+    }
+  }
+}
+
+function cutSides() {
+  // Fill any empty space on the sides of the screen
+  fill("black");
+  noStroke();
+  rect(0, 0, 300, height); // Left side
+  rect(width - (width - sm_background.width) / 2, 0, (width - sm_background.width) / 2, height); // Right side
 }
