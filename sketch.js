@@ -41,6 +41,29 @@ class Camera{
   }
 }
 
+class Plant{
+  constructor(x, y, plantType, health){
+    this.y = y;
+    this.x = x;
+    this.plant = plantType;
+    this.health = health;
+  }
+}
+
+class Zombie {
+  constructor(x, y, zombieType, health, speed, eatingImage){
+    this.x = x;
+    this.y = y;
+    this.zombie = zombieType;
+    this.health = health;
+    this.dx = speed;
+    this.state = "walk";
+  }
+}
+
+
+
+
 let myCamera;
 let duration = 1500;  
 
@@ -169,7 +192,7 @@ function draw() {
     startMenu();
   }
   if (modeState === "adventure") {
-    cutSides()
+    cutSides();
     if (gameState === "pregame") {
       
       pregameCameraFWD.pan();
@@ -370,7 +393,7 @@ function readySetPlant() {
 
 function cutSides() {
   // Fill any empty space on the sides of the screen
-  canvas = createCanvas(windowWidth-600+lawnend.width,windowHeight)
+  canvas = createCanvas(windowWidth-600+lawnend.width,windowHeight);
   canvas.position(300-lawnend.width/2, 0);
 
 }
