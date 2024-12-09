@@ -20,7 +20,7 @@ class Camera{
     let currentX = lerp(this.startX, this.endX, time);
   
     push();
-    translate(currentX, 0);
+    translate(currentX-bg_house.width, 0);
     displayBackground();
   
     if (time < 1) {
@@ -154,6 +154,7 @@ function setup() {
   yPositionScale = windowHeight/originalHeight;  
   pregameCameraFWD = new Camera((width-sm_background.width)/2, -bg_road.width, duration); 
   pregameCameraBWD = new Camera(-bg_road.width,(width-sm_background.width)/2-bg_house.width, duration);
+    
 }
 
 
@@ -161,14 +162,16 @@ function draw() {
   background(220);
 
   // Ensure sides are black if needed
-  cutSides();
+  
 
   // Handle different game states
   if (modeState === "menu") {
     startMenu();
   }
   if (modeState === "adventure") {
+    cutSides()
     if (gameState === "pregame") {
+      
       pregameCameraFWD.pan();
     } 
     else {
@@ -177,6 +180,7 @@ function draw() {
     }
     displayMouseXY();
   }
+  
 }
 
 
@@ -321,6 +325,7 @@ function mouseReleased() {
   if (modeState === "menu") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
       modeState = "adventure";
+      
     }
     else if (mouseX >= 1430 * xPositionScale && mouseX <= 1517 * xPositionScale && mouseY > 699 * yPositionScale && mouseY < 841 * yPositionScale) {
       window.close();
@@ -348,13 +353,13 @@ function readySetPlant() {
     if (messageIndex < countdownMessages.length) {
       let currentMessage = countdownMessages[messageIndex];
       if (currentMessage === "ready") {
-        image(readyMessage, (width / 2 - readyMessage.width / 2 + 125) * xPositionScale, (height / 2 - readyMessage.height / 2 - 25) * yPositionScale);
+        image(readyMessage, (width / 2 - readyMessage.width / 2 + 125 +300) * xPositionScale, (height / 2 - readyMessage.height / 2 - 25) * yPositionScale);
       }
       else if (currentMessage === "set") {
-        image(setMessage, (width / 2 - setMessage.width / 2 + 125) * xPositionScale, (height / 2 - setMessage.height / 2 - 25) * yPositionScale);
+        image(setMessage, (width / 2 - setMessage.width / 2 + 125+300) * xPositionScale, (height / 2 - setMessage.height / 2 - 25) * yPositionScale);
       }
       else if (currentMessage === "plant") {
-        image(plantMessage, (width / 2 - plantMessage.width / 2 + 125) * xPositionScale, (height / 2 - plantMessage.height / 2 - 25) * yPositionScale);
+        image(plantMessage, (width / 2 - plantMessage.width / 2 + 125+300) * xPositionScale, (height / 2 - plantMessage.height / 2 - 25) * yPositionScale);
       }
     }
     else {
@@ -365,8 +370,8 @@ function readySetPlant() {
 
 function cutSides() {
   // Fill any empty space on the sides of the screen
-  fill("black");
-  noStroke();
-  rect(0, 0, 300, height); // Left side
-  rect(width - (width - sm_background.width) / 2, 0, (width - sm_background.width) / 2, height); // Right side
+  canvas = createCanvas(windowWidth-600+lawnend.width,windowHeight)
+  canvas.position(300-lawnend.width/2, 0);
+
 }
+
