@@ -1,6 +1,15 @@
 //
 // Extra for Experts:
 // lerp, requestanimation
+class Timer{
+  constructor(duration){
+    this.startTime = millis();
+    this.duration = duration;
+    this.endTime = "hello";
+  }
+}
+
+
 class Camera{
   constructor(startX, endX, duration) {
     this.startX = startX;  // Initial start position of the camera
@@ -47,10 +56,17 @@ class Plant{
     this.x = x;
     this.plant = plantType;
     this.health = health;
+    this.state = "idle";
+    this.sunTimer = new Timer(5000);
+    
+  }
+
+  produceSun(){
+    if (this.plant === "sunflower"&& this.sunTimer){}
   }
 
   display(){
-    image(plantType,this.x, this.y)
+    image(plantType,this.x, this.y);
   }
 }
 
@@ -65,30 +81,19 @@ class Zombie {
   }
 
   display(){
-    image(zombieType,this.x, this.y)
+    image(zombieType,this.x, this.y);
   }
 
   move(){
-    this.x+=this.dx
+    this.x+=this.dx;
   }
 }
 
-
-
-
+// General Game Variables
 let myCamera;
 let duration = 1500;  
 
-
-
-
-
-
-
 let startTime;
-
-
-
 
 let originalWidth = 1876;
 let originalHeight = 925;
@@ -122,25 +127,33 @@ let sm_help_hovered;
 let sm_quit_hovered;
 
 
-// Game Message Images
+// Game Images
 let readyMessage;
 let setMessage;
 let plantMessage;
+let menuButton;
+let menuScreen;
 
 
 
 
-
-
-//plants
+// Plants
 let peashooter;
 let sunflower;
-let cherrybomb
-let potatomine
-let wallnut
-let snowpea
-let chomper
-let repeater
+let cherryBomb;
+let potatoMine;
+let wallnut;
+let snowPea;
+let chomper, chomperEating;
+let repeater;
+
+
+// Zombies
+let zombieDie, zombieBurnt, zombieHead;
+let brownZombieStill, brownZombieWalk, brownZombieAttack;
+let coneZombieStill, coneZombieWalk, coneZombieAttack;
+let bucketZombieStill, bucketZombieWalk, bucketZombieAttack;
+
 
 
 // Grid (9x5)
@@ -159,22 +172,48 @@ let modeState = "menu";
 // Game State
 let gameState = "pregame";
 
-
-// Game Logic Variables
-let cameraPanState = "forward";
-
 // General Variables
 let countdownMessages = ["ready", "set", "plant"];
 let countdownIndex = 0;
 let countdownStartTime = null;
+let sun;
 
 
 
 function preload() {
-//plantgif
-  peashooter = loadImage("GIFs\plants\peashooter.gif")
-  sunflower = loadImage("GIFs\plants\sunflower.gif")
-  cherrybomb = loadImage("GIFs\plants\cherrybomb.gif")
+  // Game GIFs/Images
+  sun = loadImage("GIFs/sun.gif");
+
+  // Plant GIFs
+  peashooter = loadImage("GIFs/plants/peashooter.gif");
+  sunflower = loadImage("GIFs/plants/sunflower.gif");
+  cherrybomb = loadImage("GIFs/plants/cherrybomb.gif");
+  potatoMine = loadImage("GIFs/plants/potato-mine.gif");
+  wallnut = loadImage("GIFs/plants/wallnut.gif");
+  snowPea = loadImage("GIFs/plants/snowpea.gif");
+  chomper = loadImage("GIFs/plants/chomper.gif"), chomperEating = loadImage("GIFs/plants/chompereating.gif");
+  repeater = loadImage("GIFs/plants/repeater.webp");
+
+  // Zombie GIFs
+
+  zombieDie = loadImage("GIFs/zombies/zombiedie.gif");
+  zombieBurnt = loadImage("GIFs/zombies/generalZombieBurnt.webp");
+  zombieHead = loadImage("GIFs/zombies/zombiehead.gif");
+
+  brownZombieStill = loadImage("GIFs/zombies/zombiestill.gif");
+  brownZombieWalk = loadImage("GIFs/zombies/zombiewalk.gif");
+  brownZombieAttack = loadImage("GIFs/zombies/zombieattack.gif");
+
+  coneZombieStill = loadImage("GIFs/zombies/conestill.gif");
+  coneZombieWalk = loadImage("GIFs/zombies/conewalk.gif");
+  coneZombieAttack = loadImage("GIFs/zombies/coneattack.gif");
+
+  bucketZombieStill = loadImage("GIFs/zombies/bucketstill.gif");
+  bucketZombieWalk = loadImage("GIFs/zombies/bucketwalk.gif");
+  bucketZombieAttack = loadImage("GIFs/zombies/bucketattack.gif");
+
+
+
 
 
   // Load images
@@ -198,6 +237,8 @@ function preload() {
   readyMessage = loadImage("Game Messages/ready.png");
   setMessage = loadImage("Game Messages/set.png");
   plantMessage = loadImage("Game Messages/plant.png");
+  menuButton = loadImage("menus/pausemenu/home.png");
+  menuScreen = loadImage("menus/pausemenu/menuscreen.png");
 }
 
 
@@ -233,13 +274,24 @@ function draw() {
       pregameCameraBWD.pan();
       readySetPlant();
     }
+    if (gameState === "gameStart"){
+      gameTime();
+    }
     displayMouseXY();
   }
   
 }
 
 
-
+function resetGrid(){
+  grid = [
+    ["0","0","0","0","0","0","0","0","0"],
+    ["0","0","0","0","0","0","0","0","0"],
+    ["0","0","0","0","0","0","0","0","0"],
+    ["0","0","0","0","0","0","0","0","0"],
+    ["0","0","0","0","0","0","0","0","0"]
+  ];
+}
 
 
 
@@ -373,7 +425,7 @@ function startMenuHovered() {
 function displayMouseXY() {
   textSize(24);
   fill("black");
-  text("X: " + mouseX + "  Y: " + mouseY, 10, 20);
+  text("X: " + mouseX + "  Y: " + mouseY, 310, 20);
 }
 
 function mouseReleased() {
@@ -384,6 +436,12 @@ function mouseReleased() {
     }
     else if (mouseX >= 1430 * xPositionScale && mouseX <= 1517 * xPositionScale && mouseY > 699 * yPositionScale && mouseY < 841 * yPositionScale) {
       window.close();
+    }
+  }
+
+  if (modeState === "adventure") {
+    if (mouseX >= 855 && mouseX <= 1037 && mouseY > 0 && mouseY < 34) {
+      image(menuScreen, width/2, height/2);
     }
   }
 }
@@ -430,3 +488,8 @@ function cutSides() {
 
 }
 
+
+function gameTime() {
+  image(menuButton, 1135, 0, 190, 40);
+
+}
