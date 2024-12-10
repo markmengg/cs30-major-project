@@ -48,6 +48,10 @@ class Plant{
     this.plant = plantType;
     this.health = health;
   }
+
+  display(){
+    image(plantType,this.x, this.y)
+  }
 }
 
 class Zombie {
@@ -58,6 +62,14 @@ class Zombie {
     this.health = health;
     this.dx = speed;
     this.state = "walk";
+  }
+
+  display(){
+    image(zombieType,this.x, this.y)
+  }
+
+  move(){
+    this.x+=this.dx
   }
 }
 
@@ -117,6 +129,20 @@ let plantMessage;
 
 
 
+
+
+
+//plants
+let peashooter;
+let sunflower;
+let cherrybomb
+let potatomine
+let wallnut
+let snowpea
+let chomper
+let repeater
+
+
 // Grid (9x5)
 const ROWS = 9;
 const COLUMNS = 5;
@@ -145,6 +171,12 @@ let countdownStartTime = null;
 
 
 function preload() {
+//plantgif
+  peashooter = loadImage("GIFs\plants\peashooter.gif")
+  sunflower = loadImage("GIFs\plants\sunflower.gif")
+  cherrybomb = loadImage("GIFs\plants\cherrybomb.gif")
+
+
   // Load images
   bg_house = loadImage("bgImages/day/house.png");
   bg_topFence = loadImage("bgImages/day/topFence.png");
