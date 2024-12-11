@@ -1,13 +1,7 @@
 //
 // Extra for Experts:
 // lerp, requestanimation
-class Timer{
-  constructor(duration){
-    this.startTime = millis();
-    this.duration = duration;
-    this.endTime = "hello";
-  }
-}
+
 
 
 class Camera{
@@ -138,7 +132,7 @@ let menuButton;
 let menuScreen;
 
 
-let plantBar
+let plantBar;
 
 
 
@@ -178,6 +172,7 @@ let modeState = "menu";
 let gameState = "pregame";
 
 // General Variables
+let paused =false;
 let countdownMessages = ["ready", "set", "plant"];
 let countdownIndex = 0;
 let countdownStartTime = null;
@@ -186,7 +181,7 @@ let sun;
 
 
 function preload() {
-  plantBar = loadImage("selectionscreen/bar.png")
+  plantBar = loadImage("selectionscreen/bar.png");
 
   // Game GIFs/Images
   sun = loadImage("GIFs/sun.gif");
@@ -251,10 +246,10 @@ function preload() {
 
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(1591, 775);
   imageResize(); // Resize all images once during setup
-  xPositionScale = windowWidth/originalWidth;
-  yPositionScale = windowHeight/originalHeight;  
+  xPositionScale = 1591/originalWidth;
+  yPositionScale = 775/originalHeight;  
   pregameCameraFWD = new Camera((width-sm_background.width)/2, -bg_road.width, duration); 
   pregameCameraBWD = new Camera(-bg_road.width,(width-sm_background.width)/2-bg_house.width, duration);
     
@@ -356,8 +351,6 @@ function displayBackground() {
 
 function startMenuHovered() {
 
-
-
   // Adventure Button
   if (
     mouseX >= 958 * xPositionScale && 
@@ -448,8 +441,11 @@ function mouseReleased() {
   }
 
   if (modeState === "adventure") {
-    if (mouseX >= 855 && mouseX <= 1037 && mouseY > 0 && mouseY < 34) {
-      image(menuScreen, width/2, height/2);
+    if (gameState === "gameStart"){
+      if (mouseX >= 855  && mouseX <= 1037  && mouseY > 0  && mouseY < 34 ) {
+        paused = true;
+        gamePause();
+      }
     }
   }
 }
@@ -500,4 +496,12 @@ function cutSides() {
 function gameTime() {
   image(menuButton, 1135, 0, 190, 40);
   image(plantBar,300,0,570,100);
+}
+
+
+function gamePause() {
+  if (paused === true){
+    noLoop();
+    image(menuScreen, width/2 + 95, height/4 - 55);
+  }
 }
