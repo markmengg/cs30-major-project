@@ -93,6 +93,9 @@ class Zombie {
 let myCamera;
 let duration = 1500;  
 
+
+
+
 let startTime;
 
 let originalWidth = 1876;
@@ -134,6 +137,8 @@ let plantMessage;
 let menuButton;
 let menuScreen;
 
+
+let plantBar
 
 
 
@@ -181,6 +186,8 @@ let sun;
 
 
 function preload() {
+  plantBar = loadImage("selectionscreen/bar.png")
+
   // Game GIFs/Images
   sun = loadImage("GIFs/sun.gif");
 
@@ -266,6 +273,7 @@ function draw() {
   }
   if (modeState === "adventure") {
     cutSides();
+    
     if (gameState === "pregame") {
       
       pregameCameraFWD.pan();
@@ -491,5 +499,5 @@ function cutSides() {
 
 function gameTime() {
   image(menuButton, 1135, 0, 190, 40);
-
+  image(plantBar,300,0,570,100);
 }
