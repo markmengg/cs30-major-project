@@ -1,4 +1,5 @@
 //
+
 // Extra for Experts:
 // lerp, requestanimation
 
@@ -83,6 +84,38 @@ class Zombie {
   }
 }
 
+class Sun {
+  constructor(x, y, finalY, mode){
+    this.x = x;
+    this.y = y;
+    this.finalY = finalY;
+    this.finalX = null;
+    this.dy = 1.5;
+    this.dx = null;
+    this.collected = false;
+    this.mode = mode;
+    if (mode === "plant"){
+      this.velocity = -3;
+      this.acell = 0.2;
+    }
+  }
+
+  update(arraylocation) {
+
+    // For the Sun coming from the Sky
+    if (this.y <= this.finalY && !this.collected && this.mode === "sky") {
+      this.y += this.dy;
+    }
+  }
+
+  display() {
+    image(sun, this.x, this.y, sunSize, sunSize);
+  }
+
+}
+
+
+
 // General Game Variables
 let myCamera;
 let duration = 1500;  
@@ -135,7 +168,6 @@ let menuScreen;
 let plantBar;
 
 
-
 // Plants
 let peashooter;
 let sunflower;
@@ -166,6 +198,16 @@ let grid = [
   ["0","0","0","0","0","0","0","0","0"]
 ];
 
+
+let tileSizeY;
+let tileSizeX;
+;
+
+
+
+
+
+
 // Game Mode
 let modeState = "menu";
 // Game State
@@ -177,6 +219,7 @@ let countdownMessages = ["ready", "set", "plant"];
 let countdownIndex = 0;
 let countdownStartTime = null;
 let sun;
+let sunSize;
 
 
 
@@ -252,13 +295,34 @@ function setup() {
   yPositionScale = 775/originalHeight;  
   pregameCameraFWD = new Camera((width-sm_background.width)/2, -bg_road.width, duration); 
   pregameCameraBWD = new Camera(-bg_road.width,(width-sm_background.width)/2-bg_house.width, duration);
-    
+  tileSizeX = lawn.width/9;
+  tileSizeY = lawn.height/5;
+  sunSize =  tileSizeX*0.5;
 }
+
+function hoverGrid(){
+  push();
+  translate(bg_house.width+lawnmower.width,bg_topFence.height);
+  let x = Math.floor(mouseX / tileSizeX);
+  let y = Math.floor(mouseY / tileSizeY);
+  fill("yellow");
+  grid[y][x] = 1;
+  rect(x,y,tileSizeX,tileSizeY);
+  pop();
+}
+
 
 
 function draw() {
   background(220);
 
+
+  if (paused){
+    gamePause();
+  }
+  else{
+    gameResume();
+  }
   // Ensure sides are black if needed
   
 
@@ -266,7 +330,8 @@ function draw() {
   if (modeState === "menu") {
     startMenu();
   }
-  if (modeState === "adventure") {
+  if (modeState === "adventure"){
+
     cutSides();
     
     if (gameState === "pregame") {
@@ -281,10 +346,15 @@ function draw() {
       gameTime();
     }
     displayMouseXY();
+    
   }
   
 }
 
+
+function mousePressed(){
+  hoverGrid()
+}
 
 function resetGrid(){
   grid = [
@@ -446,6 +516,12 @@ function mouseReleased() {
         paused = true;
         gamePause();
       }
+      if (paused) {
+        if (mouseX >= 373  && mouseX <= 709  && mouseY > 550  && mouseY < 612 ) {
+          paused = false;
+          gameResume();
+        }
+      }
     }
   }
 }
@@ -503,5 +579,11 @@ function gamePause() {
   if (paused === true){
     noLoop();
     image(menuScreen, width/2 + 95, height/4 - 55);
+  }
+}
+
+function gameResume() {
+  if (paused === false){
+    loop();
   }
 }
