@@ -1,7 +1,10 @@
 //
 
+
+
 // Extra for Experts:
 // lerp, requestanimation
+let sunArray = [];
 
 
 
@@ -57,7 +60,11 @@ class Plant{
   }
 
   produceSun(){
-    if (this.plant === "sunflower"&& this.sunTimer){}
+    if (this.plant === "sunflower"&& this.sunTimer.expired()){
+      let sun = new Sun(random(bg_house.width+this.x*tileSizeX,bg_house.width+(this.x-1)*tileSizeX));
+      sunArray.push(sun);
+      this.sunTimer = new Timer (10000);
+    }
   }
 
   display(){
@@ -164,8 +171,16 @@ let plantMessage;
 let menuButton;
 let menuScreen;
 
-
+// Plant Bar
 let plantBar;
+let sunflowerPacket;
+let peashooterPacket;
+let cherryBombPacket;
+let potatoMinePacket;
+let wallnutPacket;
+let snowPeaPacket;
+let chomperPacket;
+let repeaterPacket;
 
 
 // Plants
@@ -257,7 +272,17 @@ function preload() {
   bucketZombieWalk = loadImage("GIFs/zombies/bucketwalk.gif");
   bucketZombieAttack = loadImage("GIFs/zombies/bucketattack.gif");
 
-
+  // Plant Bar Itemms
+  
+  plantBar = loadImage("selectionscreen/bar.png");
+  sunflowerPacket = loadImage("packets/sunflower.webp");
+  peashooterPacket = loadImage("packets/peashooter.webp");
+  cherryBombPacket = loadImage("packets/cherrybomb.webp");
+  potatoMinePacket = loadImage("packets/potatomine.webp");
+  wallnutPacket = loadImage("packets/wallnut.webp");
+  snowPeaPacket = loadImage("packets/snowpea.webp");
+  chomperPacket = loadImage("packets/chomper.webp");
+  repeaterPacket = loadImage("packets/repeater.webp");
 
 
 
@@ -300,21 +325,13 @@ function setup() {
   sunSize =  tileSizeX*0.5;
 }
 
-function hoverGrid(){
-  push();
-  translate(bg_house.width+lawnmower.width,bg_topFence.height);
-  let x = Math.floor(mouseX / tileSizeX);
-  let y = Math.floor(mouseY / tileSizeY);
-  fill("yellow");
-  grid[y][x] = 1;
-  rect(x,y,tileSizeX,tileSizeY);
-  pop();
-}
+
 
 
 
 function draw() {
   background(220);
+
 
 
   if (paused){
@@ -323,7 +340,7 @@ function draw() {
   else{
     gameResume();
   }
-  // Ensure sides are black if needed
+  
   
 
   // Handle different game states
@@ -344,6 +361,7 @@ function draw() {
     }
     if (gameState === "gameStart"){
       gameTime();
+
     }
     displayMouseXY();
     
@@ -352,9 +370,7 @@ function draw() {
 }
 
 
-function mousePressed(){
-  hoverGrid()
-}
+
 
 function resetGrid(){
   grid = [
@@ -572,6 +588,13 @@ function cutSides() {
 function gameTime() {
   image(menuButton, 1135, 0, 190, 40);
   image(plantBar,300,0,570,100);
+  image(sunflowerPacket, 396, 8, 55, 78);
+  image(peashooterPacket, 462, 8, 55, 78);
+  image(repeaterPacket, 528, 8, 55, 78);
+  image(wallnutPacket, 594, 8, 55, 78);
+  image(cherryBombPacket, 660, 8, 55, 78);
+  image(chomperPacket, 726, 8, 55, 78);
+  image(potatoMinePacket, 792, 8, 55, 78);
 }
 
 
