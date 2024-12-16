@@ -236,6 +236,7 @@ let countdownStartTime = null;
 let sun;
 let sunSize;
 
+let hoveredPlant = null;
 
 
 function preload() {
@@ -331,7 +332,7 @@ function setup() {
 
 function draw() {
   background(220);
-
+  
 
 
   if (paused){
@@ -361,6 +362,7 @@ function draw() {
     }
     if (gameState === "gameStart"){
       gameTime();
+      detectPacketInteractions()
 
     }
     displayMouseXY();
@@ -516,13 +518,46 @@ function displayMouseXY() {
 }
 
 
-// function mousePressed(){
-//   if (mouseX>396&&mouseX<396 +sunflowerPacket.width&&mouseY>8&&mouseY<8+sunflowerPacket.height)
-// }
+function detectPacketInteractions(){
+  let pWidth = sunflowerPacket.width;
+  let pHeight = sunflowerPacket.height;
+  if (mouseIsPressed && mouseY>8 && mouseY<8+pHeight){
+    if (mouseX>116&&mouseX<170){
+      hoveredPlant = "sunflower";
+    }
+    if (mouseX>180&&mouseX<246){
+      hoveredPlant = "peashooter";
+    }
+    if (mouseX>256&&mouseX<310){
+      hoveredPlant = "repeater";
+    }
+    if (mouseX>320&&mouseX<384){
+      hoveredPlant = "wallnut";
+    }
+    if (mouseX>394&&mouseX<458){
+      hoveredPlant = "cherryBomb";
+    }
+    if (mouseX>468&&mouseX<170){
+      hoveredPlant = "chomper";
+    }
+    if (mouseX>116&&mouseX<170){
+      hoveredPlant = "potatomine";
+    }
+  }
+}
+
+function displayPlantSeeds() {
+  
+}
 
 
 
 function mouseReleased() {
+  // if (hoveredPlant !== null){
+  //   hoveredPlant = null;
+  // }
+
+  
   if (modeState === "menu") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
       modeState = "adventure";
