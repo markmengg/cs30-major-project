@@ -515,6 +515,13 @@ function displayMouseXY() {
   text("X: " + mouseX + "  Y: " + mouseY, 310, 20);
 }
 
+
+function mousePressed(){
+  if (mouseX>396&&mouseX<396 +sunflowerPacket.width&&mouseY>8&&mouseY<8+sunflowerPacket.height)
+}
+
+
+
 function mouseReleased() {
   if (modeState === "menu") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
