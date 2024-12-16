@@ -516,9 +516,9 @@ function displayMouseXY() {
 }
 
 
-function mousePressed(){
-  if (mouseX>396&&mouseX<396 +sunflowerPacket.width&&mouseY>8&&mouseY<8+sunflowerPacket.height)
-}
+// function mousePressed(){
+//   if (mouseX>396&&mouseX<396 +sunflowerPacket.width&&mouseY>8&&mouseY<8+sunflowerPacket.height)
+// }
 
 
 
