@@ -178,7 +178,6 @@ let peashooterPacket;
 let cherryBombPacket;
 let potatoMinePacket;
 let wallnutPacket;
-let snowPeaPacket;
 let chomperPacket;
 let repeaterPacket;
 
@@ -189,7 +188,6 @@ let sunflower;
 let cherryBomb;
 let potatoMine;
 let wallnut;
-let snowPea;
 let chomper, chomperEating;
 let repeater;
 
@@ -218,6 +216,8 @@ let tileSizeY;
 let tileSizeX;
 ;
 
+let plantOffsetX = 240;
+let plantOffsetY = 50;
 
 
 
@@ -235,6 +235,8 @@ let countdownIndex = 0;
 let countdownStartTime = null;
 let sun;
 let sunSize;
+let plantSizeX = 70;
+let plantSizeY = 80;
 
 let hoveredPlant = null;
 
@@ -251,9 +253,8 @@ function preload() {
   cherrybomb = loadImage("GIFs/plants/cherrybomb.gif");
   potatoMine = loadImage("GIFs/plants/potato-mine.gif");
   wallnut = loadImage("GIFs/plants/wallnut.gif");
-  snowPea = loadImage("GIFs/plants/snowpea.gif");
   chomper = loadImage("GIFs/plants/chomper.gif"), chomperEating = loadImage("GIFs/plants/chompereating.gif");
-  repeater = loadImage("GIFs/plants/repeater.webp");
+  repeater = loadImage("GIFs/plants/repeater.gif");
 
   // Zombie GIFs
 
@@ -281,7 +282,6 @@ function preload() {
   cherryBombPacket = loadImage("packets/cherrybomb.webp");
   potatoMinePacket = loadImage("packets/potatomine.webp");
   wallnutPacket = loadImage("packets/wallnut.webp");
-  snowPeaPacket = loadImage("packets/snowpea.webp");
   chomperPacket = loadImage("packets/chomper.webp");
   repeaterPacket = loadImage("packets/repeater.webp");
 
@@ -324,6 +324,7 @@ function setup() {
   tileSizeX = lawn.width/9;
   tileSizeY = lawn.height/5;
   sunSize =  tileSizeX*0.5;
+  
 }
 
 
@@ -362,7 +363,8 @@ function draw() {
     }
     if (gameState === "gameStart"){
       gameTime();
-      detectPacketInteractions()
+      detectPacketInteractions();
+      displayPlantSeeds();
 
     }
     displayMouseXY();
@@ -525,29 +527,52 @@ function detectPacketInteractions(){
     if (mouseX>116&&mouseX<170){
       hoveredPlant = "sunflower";
     }
-    if (mouseX>180&&mouseX<246){
+    if (mouseX>180&&mouseX<234){
       hoveredPlant = "peashooter";
     }
-    if (mouseX>256&&mouseX<310){
+    if (mouseX>244&&mouseX<298){
       hoveredPlant = "repeater";
     }
-    if (mouseX>320&&mouseX<384){
+    if (mouseX>308&&mouseX<362){
       hoveredPlant = "wallnut";
     }
-    if (mouseX>394&&mouseX<458){
-      hoveredPlant = "cherryBomb";
+    if (mouseX>372&&mouseX<426){
+      hoveredPlant = "cherrybomb";
     }
-    if (mouseX>468&&mouseX<170){
+    if (mouseX>436&&mouseX<490){
       hoveredPlant = "chomper";
     }
-    if (mouseX>116&&mouseX<170){
+    if (mouseX>500&&mouseX<554){
       hoveredPlant = "potatomine";
     }
   }
 }
 
+
+
+
 function displayPlantSeeds() {
-  
+  if (hoveredPlant === "sunflower") {
+    image(sunflower, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+  }
+  else if (hoveredPlant === "peashooter") {
+    image(peashooter, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+  }
+  else if (hoveredPlant === "repeater") {
+    image(repeater, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+  }
+  else if (hoveredPlant === "wallnut") {
+    image(wallnut, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+  }
+  else if (hoveredPlant === "cherrybomb") {
+    image(cherrybomb, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+  }
+  else if (hoveredPlant === "chomper") {
+    image(chomper, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+  }
+  else if (hoveredPlant === "potatomine") {
+    image(potatoMine, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+  }
 }
 
 
@@ -626,7 +651,6 @@ function cutSides() {
 
 }
 
-
 function gameTime() {
   image(menuButton, 1135, 0, 190, 40);
   image(plantBar,300,0,570,100);
@@ -638,7 +662,6 @@ function gameTime() {
   image(chomperPacket, 726, 8, 55, 78);
   image(potatoMinePacket, 792, 8, 55, 78);
 }
-
 
 function gamePause() {
   if (paused === true){
