@@ -1,11 +1,7 @@
-//
-
-
-
 // Extra for Experts:
 // lerp, requestanimation
-let sunArray = [];
 
+let sunArray = [];
 
 
 class Camera{
@@ -127,9 +123,6 @@ class Sun {
 let myCamera;
 let duration = 1500;  
 
-
-
-
 let startTime;
 
 let originalWidth = 1876;
@@ -203,6 +196,7 @@ let bucketZombieStill, bucketZombieWalk, bucketZombieAttack;
 // Grid (9x5)
 const ROWS = 9;
 const COLUMNS = 5;
+
 let grid = [
   ["0","0","0","0","0","0","0","0","0"],
   ["0","0","0","0","0","0","0","0","0"],
@@ -234,10 +228,17 @@ let countdownMessages = ["ready", "set", "plant"];
 let countdownIndex = 0;
 let countdownStartTime = null;
 let sun;
+
+// Sizing Variables
 let sunSize;
 let plantSizeX = 70;
 let plantSizeY = 80;
+let cherrySizeX = 110;
+let cherrySizeY = 90;
+let chomperSizeX = 95;
+let chomperSizeY = 115;
 
+// Planting Function
 let hoveredPlant = null;
 
 
@@ -329,12 +330,9 @@ function setup() {
 
 
 
-
-
 function draw() {
   background(220);
   
-
 
   if (paused){
     gamePause();
@@ -344,7 +342,6 @@ function draw() {
   }
   
   
-
   // Handle different game states
   if (modeState === "menu") {
     startMenu();
@@ -565,10 +562,10 @@ function displayPlantSeeds() {
     image(wallnut, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
   }
   else if (hoveredPlant === "cherrybomb") {
-    image(cherrybomb, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+    image(cherrybomb, mouseX + plantOffsetX, mouseY - plantOffsetY, cherrySizeX, cherrySizeY);
   }
   else if (hoveredPlant === "chomper") {
-    image(chomper, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+    image(chomper, mouseX + plantOffsetX, mouseY - plantOffsetY, chomperSizeX, chomperSizeY);
   }
   else if (hoveredPlant === "potatomine") {
     image(potatoMine, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
