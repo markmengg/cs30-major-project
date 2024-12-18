@@ -325,9 +325,9 @@ function setup() {
   tileSizeX = lawn.width/9;
   tileSizeY = lawn.height/5;
   sunSize =  tileSizeX*0.5;
+  grid[3][3] = "1"
   
 }
-
 
 
 function draw() {
@@ -359,6 +359,14 @@ function draw() {
       readySetPlant();
     }
     if (gameState === "gameStart"){
+      // for (let y =0; y<5; y++){
+      //   for (let x=0;x<9;x++){
+      //     if (grid[y][x]==="1"){
+      //       fill("yellow")
+      //       rect(lawnmower.width+x*tileSizeX,bg_topFence.height+y*tileSizeY,tileSizeX,tileSizeY)
+      //     }
+      //   }
+      // }
       gameTime();
       detectPacketInteractions();
       displayPlantSeeds();
@@ -382,7 +390,6 @@ function resetGrid(){
     ["0","0","0","0","0","0","0","0","0"]
   ];
 }
-
 
 
 function imageResize() {
@@ -417,10 +424,12 @@ function imageResize() {
   lawnmower.resize(lawnmower.width * scalexLawn, lawnmower.height * scaleyLawn);
 }
 
+
 function startMenu() {
   image(sm_background, (width - sm_background.width) / 2, 0); // Center the background
   startMenuHovered(); // Check if mouse is hovering over buttons
 }
+
 
 function displayBackground() {
 
@@ -435,6 +444,7 @@ function displayBackground() {
   image(bg_house, 0, 0);
 
 }
+
 
 function startMenuHovered() {
 
@@ -546,8 +556,6 @@ function detectPacketInteractions(){
 }
 
 
-
-
 function displayPlantSeeds() {
   if (hoveredPlant === "sunflower") {
     image(sunflower, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
@@ -571,7 +579,6 @@ function displayPlantSeeds() {
     image(potatoMine, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
   }
 }
-
 
 
 function mouseReleased() {
@@ -605,6 +612,7 @@ function mouseReleased() {
     }
   }
 }
+
 
 function windowResized() {
   // Resize canvas when window is resized
@@ -641,12 +649,14 @@ function readySetPlant() {
   }
 }
 
+
 function cutSides() {
   // Fill any empty space on the sides of the screen
   canvas = createCanvas(windowWidth-600+lawnend.width,windowHeight);
   canvas.position(300-lawnend.width/2, 0);
 
 }
+
 
 function gameTime() {
   image(menuButton, 1135, 0, 190, 40);
@@ -660,12 +670,14 @@ function gameTime() {
   image(potatoMinePacket, 792, 8, 55, 78);
 }
 
+
 function gamePause() {
   if (paused === true){
     noLoop();
     image(menuScreen, width/2 + 95, height/4 - 55);
   }
 }
+
 
 function gameResume() {
   if (paused === false){
