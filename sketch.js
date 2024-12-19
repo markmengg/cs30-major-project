@@ -208,7 +208,7 @@ let grid = [
 
 let tileSizeY;
 let tileSizeX;
-;
+
 
 let plantOffsetX = 240;
 let plantOffsetY = 50;
@@ -223,7 +223,7 @@ let modeState = "menu";
 let gameState = "pregame";
 
 // General Variables
-let paused =false;
+let paused = false;
 let countdownMessages = ["ready", "set", "plant"];
 let countdownIndex = 0;
 let countdownStartTime = null;
@@ -325,7 +325,6 @@ function setup() {
   tileSizeX = lawn.width/9;
   tileSizeY = lawn.height/5;
   sunSize =  tileSizeX*0.5;
-  grid[3][3] = "1"
   
 }
 
@@ -370,6 +369,7 @@ function draw() {
       gameTime();
       detectPacketInteractions();
       displayPlantSeeds();
+      drawGrid();
 
     }
     displayMouseXY();
@@ -660,7 +660,7 @@ function cutSides() {
 
 function gameTime() {
   image(menuButton, 1135, 0, 190, 40);
-  image(plantBar,300,0,570,100);
+  image(plantBar, 300, 0, 570, 100);
   image(sunflowerPacket, 396, 8, 55, 78);
   image(peashooterPacket, 462, 8, 55, 78);
   image(repeaterPacket, 528, 8, 55, 78);
@@ -683,4 +683,75 @@ function gameResume() {
   if (paused === false){
     loop();
   }
+}
+
+function drawGrid() {
+  for (let y =0;y<5;y++){
+    for (let x= 0; x<9;x++){
+      if(grid[y][x]==="1"){
+        image(sunflower, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY-plantOffsetY , plantSizeX, plantSizeY);
+      }
+      else if(grid[y][x]==="2"){
+        image(peashooter, 274+lawnmower.width+x*tileSizeX+20,  y*tileSizeY , plantSizeX, plantSizeY);
+      }
+      else if(grid[y][x]==="3"){
+        image(repeater, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+      }
+      else if(grid[y][x]==="4"){
+        image(wallnut, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+      }
+      else if(grid[y][x]==="5"){
+        image(cherryBomb, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+      }
+      else if(grid[y][x]==="6"){
+        image(chomper, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+      }
+      else if(grid[y][x]==="7"){
+        image(potatoMine, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+      }
+
+    }
+  }
+  // sunflower 1, pea 2, repeat 3, wall 4, cherry 5, chomper 6, mine 7
+}
+
+
+
+
+function toggleCell(x, y) {
+  if (x>= 0 && y >= 0 && x < 9 && y < 5){
+    if (grid[y][x] === "0" && hoveredPlant === "sunflower"){
+      grid[y][x] = "1";
+    }
+    else if (grid[y][x] === "0" && hoveredPlant === "peashooter"){
+      grid[y][x] = "2";
+    }
+    else if (grid[y][x] === "0" && hoveredPlant === "repeater"){
+      grid[y][x] = "3";
+    }
+    else if (grid[y][x] === "0" && hoveredPlant === "wallnut"){
+      grid[y][x] = "4";
+    }
+    else if (grid[y][x] === "0" && hoveredPlant === "cherrybomb"){
+      grid[y][x] = "5";
+    }
+    else if (grid[y][x] === "0" && hoveredPlant === "chomper"){
+      grid[y][x] = "6";
+    }
+    else if (grid[y][x] === "0" && hoveredPlant === "potatomine"){
+      grid[y][x] = "7";
+    }
+    
+    
+  }
+}
+
+function mousePressed() {
+  push();
+  translate(lawnmower.width+274, bg_topFence.height);
+  let x = Math.floor(mouseX/tileSizeX);
+  let y = Math.floor(mouseY/tileSizeY);
+
+  toggleCell(x, y);
+  pop();
 }
