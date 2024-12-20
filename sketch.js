@@ -1,7 +1,6 @@
 // Extra for Experts:
 // lerp, requestanimation
 
-let sunArray = [];
 
 
 class Camera{
@@ -241,6 +240,28 @@ let chomperSizeY = 115;
 // Planting Function
 let hoveredPlant = null;
 
+
+// Arrays
+
+let peaArray = [];
+let sunArray = [];
+let zombieArray = [];
+let plantArray = [];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ---------- [ START OF CODE] --------------
 
 function preload() {
   plantBar = loadImage("selectionscreen/bar.png");
@@ -701,7 +722,7 @@ function drawGrid() {
         image(wallnut, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
       }
       else if(grid[y][x]==="5"){
-        image(cherrybomb, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , cherrySizeX, cherrySizeY);
+        image(cherrybomb, 274+lawnmower.width+x*tileSizeX, bg_topFence.height+ y*tileSizeY , cherrySizeX, cherrySizeY);
       }
       else if(grid[y][x]==="6"){
         image(chomper, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY - 20, chomperSizeX, chomperSizeY);
@@ -751,7 +772,7 @@ function mousePressed() {
 
   let x = Math.floor((mouseX-lawnmower.width)/tileSizeX);
   let y = Math.floor((mouseY-bg_topFence.height)/tileSizeY);
-  toggleCell(x,y)
+  toggleCell(x,y);
 
 
 }
