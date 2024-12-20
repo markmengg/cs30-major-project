@@ -689,10 +689,10 @@ function drawGrid() {
   for (let y =0;y<5;y++){
     for (let x= 0; x<9;x++){
       if(grid[y][x]==="1"){
-        image(sunflower, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY-plantOffsetY , plantSizeX, plantSizeY);
+        image(sunflower, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
       }
       else if(grid[y][x]==="2"){
-        image(peashooter, 274+lawnmower.width+x*tileSizeX+20,  y*tileSizeY , plantSizeX, plantSizeY);
+        image(peashooter, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
       }
       else if(grid[y][x]==="3"){
         image(repeater, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
@@ -701,10 +701,10 @@ function drawGrid() {
         image(wallnut, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
       }
       else if(grid[y][x]==="5"){
-        image(cherryBomb, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+        image(cherrybomb, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , cherrySizeX, cherrySizeY);
       }
       else if(grid[y][x]==="6"){
-        image(chomper, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+        image(chomper, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY - 20, chomperSizeX, chomperSizeY);
       }
       else if(grid[y][x]==="7"){
         image(potatoMine, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
@@ -747,11 +747,11 @@ function toggleCell(x, y) {
 }
 
 function mousePressed() {
-  push();
-  translate(lawnmower.width+274, bg_topFence.height);
-  let x = Math.floor(mouseX/tileSizeX);
-  let y = Math.floor(mouseY/tileSizeY);
 
-  toggleCell(x, y);
-  pop();
+
+  let x = Math.floor((mouseX-lawnmower.width)/tileSizeX);
+  let y = Math.floor((mouseY-bg_topFence.height)/tileSizeY);
+  toggleCell(x,y)
+
+
 }
