@@ -3,6 +3,10 @@
 
 
 
+
+// TO DO LIST -- Finish classes and composition classes for all of the plants. create collisions between the zombies and plants (arrays? grid?).
+// Figure out the built in timer, 
+
 class Camera{
   constructor(startX, endX, duration) {
     this.startX = startX;  // Initial start position of the camera
