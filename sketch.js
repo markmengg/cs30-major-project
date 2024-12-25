@@ -577,6 +577,7 @@ function detectPacketInteractions(){
     if (mouseX>500&&mouseX<554){
       hoveredPlant = "potatomine";
     }
+    
   }
 }
 
@@ -766,7 +767,7 @@ function toggleCell(x, y) {
     else if (grid[y][x] === "0" && hoveredPlant === "potatomine"){
       grid[y][x] = "7";
     }
-    
+    hoveredPlant = null
     
   }
 }
