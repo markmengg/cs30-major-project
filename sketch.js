@@ -2,7 +2,8 @@
 // lerp, requestanimation
 
 
-
+//peagif for Pea-display
+//Pea-colliding after zombie
 
 // TO DO LIST -- Finish classes and composition classes for all of the plants. create collisions between the zombies and plants (arrays? grid?).
 // Figure out the built in timer, 
@@ -55,6 +56,8 @@ class Plant{
     this.health = health;
     this.state = "idle";
     this.sunTimer = new Timer(5000);
+    this.peaTimer = new Timer(1500)
+
     
   }
 
@@ -63,6 +66,12 @@ class Plant{
       let sun = new Sun(random(bg_house.width+this.x*tileSizeX,bg_house.width+(this.x-1)*tileSizeX),tileSizeY * (this.y + 1.65), "plant");
       sunArray.push(sun);
       this.sunTimer = new Timer (10000);
+    }
+  }
+
+  shootpea(){
+    if(this.plant===peashooter&&this.peaTimer.expired()){
+
     }
   }
 
@@ -89,6 +98,50 @@ class Zombie {
     this.x+=this.dx;
   }
 }
+
+
+class Pea{
+  constructor(x,y){
+    this.x = x
+    this.y=y
+    this.vx = 20
+    this.hit = false
+  }
+
+  // colliding(){
+  //   if 
+  // }
+
+  update(arraylocation){
+    if (!this.hit&&this.x<3000){
+      this.x+=this.vx
+    }
+    else if(this.hit){
+      let timer = new Timer(200)
+      if (!timer.expired()){
+        this.hiteffect()
+      }
+      else{
+        peaArray.splice(arraylocation,1)
+      }
+    }
+    else{
+      peaArray.splice(arraylocation,1)
+    }
+  }
+  // display(){
+  //   if(!this.hit){
+  //     image(pea,this.x,this.y,peasize,peasize)
+  //   }
+  // }
+  
+
+
+  // hiteffect(){
+  //   display(peaeffect,this.x,this.y)
+  // }
+}
+
 
 class Sun {
   constructor(x, y, finalY, mode){
@@ -121,7 +174,7 @@ class Sun {
   }
 
 
-  collecting(){
+  collecting(arraylocation){
     if (mouseX >= this.x && mouseX  <= this.x + 50 && mouseY >= this.y && mouseY  <=this.y + 50 && !this.collected){
       this.collected = true
     }
@@ -374,6 +427,7 @@ function setup() {
 }
 
 function backstage(){
+  //sun
   let suntimer = new Timer(2000)
   suntimer.start()
   if (suntimer.expired()){
