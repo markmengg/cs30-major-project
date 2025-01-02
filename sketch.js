@@ -60,7 +60,7 @@ class Plant{
 
   produceSun(){
     if (this.plant === "sunflower"&& this.sunTimer.expired()){
-      let sun = new Sun(random(bg_house.width+this.x*tileSizeX,bg_house.width+(this.x-1)*tileSizeX));
+      let sun = new Sun(random(bg_house.width+this.x*tileSizeX,bg_house.width+(this.x-1)*tileSizeX),tileSizeY * (this.y + 1.65), "plant");
       sunArray.push(sun);
       this.sunTimer = new Timer (10000);
     }
@@ -112,7 +112,27 @@ class Sun {
     if (this.y <= this.finalY && !this.collected && this.mode === "sky") {
       this.y += this.dy;
     }
+
+    else if (this.mode==="sunflower"&&this.y<this.finalY){
+      this.y += this.dy
+      this.y += this.velocity
+      this.velocity +=this.acell
+    }
   }
+
+
+  collecting(){
+    if (mouseX >= this.x && mouseX  <= this.x + 50 && mouseY >= this.y && mouseY  <=this.y + 50 && !this.collected){
+      this.collected = true
+    }
+
+    if (this.collected){
+      this.x -= this.dx;
+      this.y -= this.dy;
+      if (this.y < tileSize/10 && this.x < backgroundOffset- tileSize* (7/12)){
+        sunArray.splice(arraylocation, 1);
+      }
+  }}
 
   display() {
     image(sun, this.x, this.y, sunSize, sunSize);
@@ -353,10 +373,33 @@ function setup() {
   
 }
 
+function backstage(){
+  let suntimer = new Timer(2000)
+  suntimer.start()
+  if (suntimer.expired()){
+    let x= random*lawn.width+300+lawnmower.width
+    let y= bg_topFence.height
+    let finaly = y+200
+    let sun = new Sun(x,y,finaly,"sky")
+    sunArray.push(sun);
+    suntimer = new Timer(2000)
+  }
+  
+}
+
+
+
 
 function draw() {
   background(220);
   
+
+
+
+
+  for (let sun of sunArray){
+    sun.display()
+  }
 
   if (paused){
     gamePause();
@@ -608,9 +651,9 @@ function displayPlantSeeds() {
 
 
 function mouseReleased() {
-  // if (hoveredPlant !== null){
-  //   hoveredPlant = null;
-  // }
+  for (let sun of sunArray){
+    sun.collecting()
+  }
 
   
   if (modeState === "menu") {
