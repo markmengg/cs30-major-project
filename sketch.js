@@ -439,6 +439,16 @@ function backstage(){
     suntimer = new Timer(2000)
   }
   
+
+
+}
+
+function plantsdefaultfns(){
+  for (let plant of plantArray){
+    plant.display()
+    plant.shootpea()
+    plant.produceSun()
+  }
 }
 
 
@@ -845,6 +855,7 @@ function toggleCell(x, y) {
   if (x>= 0 && y >= 0 && x < 9 && y < 5){
     if (grid[y][x] === "0" && hoveredPlant === "sunflower"){
       grid[y][x] = "1";
+      
     }
     else if (grid[y][x] === "0" && hoveredPlant === "peashooter"){
       grid[y][x] = "2";
@@ -864,6 +875,8 @@ function toggleCell(x, y) {
     else if (grid[y][x] === "0" && hoveredPlant === "potatomine"){
       grid[y][x] = "7";
     }
+    let plant = new Plant(x*tileSizeX+300,y*tileSizeY+bg_topFence.height,hoveredPlant,null)
+    plantArray.push(plant)
     hoveredPlant = null
     
   }
