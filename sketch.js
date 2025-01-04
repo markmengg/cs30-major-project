@@ -1,5 +1,4 @@
 // Extra for Experts:
-// lerp, requestanimation
 
 
 //peagif for Pea-display
