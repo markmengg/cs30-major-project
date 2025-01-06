@@ -6,6 +6,120 @@
 
 // TO DO LIST -- Finish classes and composition classes for all of the plants. create collisions between the zombies and plants (arrays? grid?).
 // Figure out the built in timer, 
+class Timer {
+  // Store the duration and start the timer
+  constructor( _duration, start = false ) {
+    this.startTime = millis();
+    this.duration = _duration;
+    this.paused = false;
+    this.pauseStartTime = 0;        // this will be millis() after the pause()
+    this.totalPauseTime = 0;        // so we can make accurate calculations
+  }
+
+  // MAIN FUNCTIONS
+  //starts the timer if it was expired or paused
+  start() { 
+    if( this.expired() ) {            
+      this.startTime = millis();      // restarts counting millis
+    }
+    else if( this.paused ) { 
+      // unpauses, add paused amount to total pause tume
+      this.totalPauseTime += millis() - this.pauseStartTime;
+      this.paused = false; 
+    }
+  }
+
+  // returns true if the timer is expired, e.g. if millis() is greater than startTime + duration
+  expired() {
+    return this.startTime + this.duration + this.getPauseTime()  < millis();
+  }
+
+  // restarts timer regardless of status
+  reset(){
+    this.startTime = millis();
+    this.totalPauseTime = 0;
+
+    if( this.paused ) {
+      this.pauseStartTime = this.startTime;
+    }
+    else {
+      this.pauseStartTime = 0;
+    }
+  }
+
+  // pauses the timer 
+  pause(){
+    if( this.paused === false ) {
+      this.pauseStartTime = millis();
+      this.paused = true; 
+    }
+  }
+  
+  // adds x millis to the remaining duration. 
+  addTime(x){
+    this.duration += x; 
+  }
+
+  // set the duration, doesn't start the timer
+  setTimer(_duration) {
+    this.duration = _duration;
+  }
+  
+  //forces an expired() state by setting remaining duration to zero. 
+  endTimer(){
+    this.duration = 0; 
+  }
+
+  // SIMPLE ACCESSORS
+  // accessor: returns true/false, indicating paused state
+  isPaused() {
+    return this.paused;
+  }
+
+  // returns remaining time in milliseconds, zero if timer is done
+  getRemainingTime() {
+    if( this.expired() ) {
+      return 0;
+    }
+      
+    // never return a neg number + account for pause time
+    let rt = this.startTime + this.duration + this.getPauseTime() - millis();
+    if( rt < 0 ) {
+      rt = 0;
+    }
+    return rt;
+  }  
+
+  // returns remaining % of timer, 0.0 through 1.0
+  getPercentageRemaining() {
+    if( this.duration === 0 )  { 
+      return 0.0;     // avoid div by zero error
+    }
+    if( this.expired() ) { 
+      return 0.0;
+    }
+
+    return this.getRemainingTime()/this.duration;
+  }
+
+  // returns elapsed % of timer, 0.0 through 1.0
+  getPercentageElapsed() {
+    return 1.0 - this.getPercentageRemaining(); //refactor to remove duplication
+  }	
+
+  // we use this to account for all paused actions: return active and past pause times
+  getPauseTime() {
+    let pauseTime = this.totalPauseTime;
+
+    if( this.paused ) {
+      pauseTime += millis() - this.pauseStartTime;
+    }
+
+    return pauseTime;
+  } 	
+}
+
+
 
 class Camera{
   constructor(startX, endX, duration) {
@@ -55,7 +169,7 @@ class Plant{
     this.health = health;
     this.state = "idle";
     this.sunTimer = new Timer(5000);
-    this.peaTimer = new Timer(1500)
+    this.peaTimer = new Timer(1500);
 
     
   }
@@ -101,10 +215,10 @@ class Zombie {
 
 class Pea{
   constructor(x,y){
-    this.x = x
-    this.y=y
-    this.vx = 20
-    this.hit = false
+    this.x = x;
+    this.y=y;
+    this.vx = 20;
+    this.hit = false;
   }
 
   // colliding(){
@@ -113,19 +227,19 @@ class Pea{
 
   update(arraylocation){
     if (!this.hit&&this.x<3000){
-      this.x+=this.vx
+      this.x+=this.vx;
     }
     else if(this.hit){
-      let timer = new Timer(200)
+      let timer = new Timer(200);
       if (!timer.expired()){
-        this.hiteffect()
+        this.hiteffect();
       }
       else{
-        peaArray.splice(arraylocation,1)
+        peaArray.splice(arraylocation,1);
       }
     }
     else{
-      peaArray.splice(arraylocation,1)
+      peaArray.splice(arraylocation,1);
     }
   }
   // display(){
@@ -166,16 +280,16 @@ class Sun {
     }
 
     else if (this.mode==="sunflower"&&this.y<this.finalY){
-      this.y += this.dy
-      this.y += this.velocity
-      this.velocity +=this.acell
+      this.y += this.dy;
+      this.y += this.velocity;
+      this.velocity +=this.acell;
     }
   }
 
 
   collecting(arraylocation){
     if (mouseX >= this.x && mouseX  <= this.x + 50 && mouseY >= this.y && mouseY  <=this.y + 50 && !this.collected){
-      this.collected = true
+      this.collected = true;
     }
 
     if (this.collected){
@@ -184,7 +298,8 @@ class Sun {
       if (this.y < tileSize/10 && this.x < backgroundOffset- tileSize* (7/12)){
         sunArray.splice(arraylocation, 1);
       }
-  }}
+    }
+  }
 
   display() {
     image(sun, this.x, this.y, sunSize, sunSize);
@@ -427,15 +542,15 @@ function setup() {
 
 function backstage(){
   //sun
-  let suntimer = new Timer(2000)
-  suntimer.start()
+  let suntimer = new Timer(2000);
+  suntimer.start();
   if (suntimer.expired()){
-    let x= random*lawn.width+300+lawnmower.width
-    let y= bg_topFence.height
-    let finaly = y+200
-    let sun = new Sun(x,y,finaly,"sky")
+    let x= random*lawn.width+300+lawnmower.width;
+    let y= bg_topFence.height;
+    let finaly = y+200;
+    let sun = new Sun(x,y,finaly,"sky");
     sunArray.push(sun);
-    suntimer = new Timer(2000)
+    suntimer = new Timer(2000);
   }
   
 
@@ -444,9 +559,9 @@ function backstage(){
 
 function plantsdefaultfns(){
   for (let plant of plantArray){
-    plant.display()
-    plant.shootpea()
-    plant.produceSun()
+    if (plant.plantType==="sunflower"){
+      plant.produceSun()
+    }
   }
 }
 
@@ -455,13 +570,15 @@ function plantsdefaultfns(){
 
 function draw() {
   background(220);
+  backstage()
+  plantsdefaultfns()
   
 
 
 
 
   for (let sun of sunArray){
-    sun.display()
+    sun.display();
   }
 
   if (paused){
@@ -715,7 +832,7 @@ function displayPlantSeeds() {
 
 function mouseReleased() {
   for (let sun of sunArray){
-    sun.collecting()
+    sun.collecting();
   }
 
   
@@ -874,9 +991,9 @@ function toggleCell(x, y) {
     else if (grid[y][x] === "0" && hoveredPlant === "potatomine"){
       grid[y][x] = "7";
     }
-    let plant = new Plant(x*tileSizeX+300,y*tileSizeY+bg_topFence.height,hoveredPlant,null)
-    plantArray.push(plant)
-    hoveredPlant = null
+    let plant = new Plant(x,y,hoveredPlant,null);
+    plantArray.push(plant);
+    hoveredPlant = null;
     
   }
 }
