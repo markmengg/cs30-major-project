@@ -3,6 +3,8 @@
 
 //peagif for Pea-display
 //Pea-colliding after zombie
+// Alpha value of hovered plants, blacked out emblems for the packets
+// pea shoot only when theres a zombie
 
 // TO DO LIST -- Finish classes and composition classes for all of the plants. create collisions between the zombies and plants (arrays? grid?).
 // Figure out the built in timer, 
@@ -182,9 +184,21 @@ class Plant{
     }
   }
 
-  shootpea(){
-    if(this.plant===peashooter&&this.peaTimer.expired()){
+  shootPea(){
+    if(this.plant==="peashooter"&&this.peaTimer.expired()){
+      let pea = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+      peaArray.push(pea);
+      this.peaTimer = new Timer(1500);
+    }
+  }
 
+  repeaterAttack(){
+    if(this.plant==="repeater"&&this.peaTimer.expired()){
+      let pea2 = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+      let pea1 = new Pea(300+(this.x+1)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+      peaArray.push(pea1);
+      peaArray.push(pea2);
+      this.peaTimer = new Timer(1500);
     }
   }
 
@@ -217,7 +231,7 @@ class Pea{
   constructor(x,y){
     this.x = x;
     this.y=y;
-    this.vx = 20;
+    this.vx = 6;
     this.hit = false;
   }
 
@@ -242,11 +256,13 @@ class Pea{
       peaArray.splice(arraylocation,1);
     }
   }
-  // display(){
-  //   if(!this.hit){
-  //     image(pea,this.x,this.y,peasize,peasize)
-  //   }
-  // }
+
+  
+  display(){
+    if(!this.hit){
+      image(pea,this.x,this.y,peaSize,peaSize);
+    }
+  }
   
 
 
@@ -288,16 +304,13 @@ class Sun {
 
 
   collecting(arraylocation){
-    if (mouseX >= this.x && mouseX  <= this.x + 50 && mouseY >= this.y && mouseY  <=this.y + 50 && !this.collected){
+    if (mouseX >= this.x-300 && mouseX  <= this.x -300+sunSize && mouseY >= this.y && mouseY  <=this.y + sunSize && !this.collected){
       this.collected = true;
     }
 
     if (this.collected){
-      this.x -= this.dx;
-      this.y -= this.dy;
-      if (this.y < tileSize/10 && this.x < backgroundOffset- tileSize* (7/12)){
-        sunArray.splice(arraylocation, 1);
-      }
+      sunArray.splice(arraylocation,1);
+      sunCurrency += 25;
     }
   }
 
@@ -418,10 +431,12 @@ let countdownMessages = ["ready", "set", "plant"];
 let countdownIndex = 0;
 let countdownStartTime = null;
 let sun;
+let pea;
 let sunCurrency = 50;
 
 // Sizing Variables
 let sunSize;
+let peaSize;
 let plantSizeX = 70;
 let plantSizeY = 80;
 let cherrySizeX = 110;
@@ -460,6 +475,7 @@ function preload() {
 
   // Game GIFs/Images
   sun = loadImage("GIFs/sun.gif");
+  pea = loadImage("GIFs/peaBullet.png");
 
   // Plant GIFs
   peashooter = loadImage("GIFs/plants/peashooter.gif");
@@ -537,7 +553,8 @@ function setup() {
   pregameCameraBWD = new Camera(-bg_road.width,(width-sm_background.width)/2-bg_house.width, duration);
   tileSizeX = lawn.width/9;
   tileSizeY = lawn.height/5;
-  sunSize =  tileSizeX*0.5;
+  sunSize =  tileSizeX*0.75;
+  peaSize = tileSizeX*0.4;
   suntimer =  new Timer(2000);
 }
 
@@ -551,7 +568,7 @@ function backstage(){
     let finalY = y+200;
     let sun = new Sun(random(300, tileSizeX * 9 + 300), 0, random(tileSizeY * 1.25, tileSizeY* 4.75), "sky");
     sunArray.push(sun);
-    suntimer = new Timer(2000);
+    suntimer = new Timer(10000);
   }
 
 
@@ -560,7 +577,10 @@ function backstage(){
     sun.display();
   }
   
-
+  for (let i =0;i<peaArray.length;i++){
+    peaArray[i].display();
+    peaArray[i].update(i);
+  }
 
 }
 
@@ -569,13 +589,19 @@ function plantsdefaultfns(){
     if (plant.plant==="sunflower"){
       plant.produceSun();
     }
+    if (plant.plant==="peashooter"){
+      plant.shootPea();
+    }
+    if(plant.plant==="repeater"){
+      plant.repeaterAttack();
+    }
   }
 }
 
 function displaySunCurrency() {
-  textSize(24);
+  textSize(20);
   fill("black");
-  text(sunCurrency, 330, 88);
+  text(sunCurrency, 333, 88);
 }
 
 
@@ -792,25 +818,25 @@ function detectPacketInteractions(){
   let pWidth = sunflowerPacket.width;
   let pHeight = sunflowerPacket.height;
   if (mouseIsPressed && mouseY>8 && mouseY<8+pHeight){
-    if (mouseX>116&&mouseX<170&&sunCurrency>=50){
+    if (mouseX>116 && mouseX<170&& sunCurrency>=50){
       hoveredPlant = "sunflower";
     }
-    if (mouseX>180&&mouseX<234&&sunCurrency>=100){
+    if (mouseX>180 && mouseX<234 && sunCurrency>=100){
       hoveredPlant = "peashooter";
     }
-    if (mouseX>244&&mouseX<298){
+    if (mouseX>244 && mouseX<298 && sunCurrency>=200){
       hoveredPlant = "repeater";
     }
-    if (mouseX>308&&mouseX<362){
+    if (mouseX>308 && mouseX<362 && sunCurrency>=50){
       hoveredPlant = "wallnut";
     }
-    if (mouseX>372&&mouseX<426){
+    if (mouseX>372 && mouseX<426 && sunCurrency>=150){
       hoveredPlant = "cherrybomb";
     }
-    if (mouseX>436&&mouseX<490){
+    if (mouseX>436 && mouseX<490  && sunCurrency>=150){
       hoveredPlant = "chomper";
     }
-    if (mouseX>500&&mouseX<554){
+    if (mouseX>500 && mouseX<554 && sunCurrency>=25){
       hoveredPlant = "potatomine";
     }
     
@@ -844,11 +870,7 @@ function displayPlantSeeds() {
 
 
 function mouseReleased() {
-  for (let sun of sunArray){
-    sun.collecting();
-  }
 
-  
   if (modeState === "menu") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
       modeState = "adventure";
@@ -1019,6 +1041,10 @@ function toggleCell(x, y) {
 
 function mousePressed() {
 
+
+  for (let i=0;i<sunArray.length;i++){
+    sunArray[i].collecting(i);
+  }
 
   let x = Math.floor((mouseX-lawnmower.width)/tileSizeX);
   let y = Math.floor((mouseY-bg_topFence.height)/tileSizeY);
