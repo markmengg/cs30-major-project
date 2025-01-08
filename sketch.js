@@ -643,11 +643,7 @@ function backstage(){
 }
 
 function plantsdefaultfns(){
-  // for (let i=0;i<plantArray.length;i++){
-  //   if (plantArray[i].health<=0){
-  //     plantArray.splice(i,1);
-  //   }
-  // }
+
   
   for (let plant of plantArray){
     if (plant.plant==="sunflower"){
@@ -672,6 +668,12 @@ function displaySunCurrency() {
 function draw() {
   background(220);
 
+
+  for (let i=0;i<plantArray.length;i++){
+    if (plantArray[i].health<=0){
+      plantArray.splice(i,1);
+    }
+  }
   
 
 
@@ -1096,13 +1098,13 @@ function toggleCell(x, y) {
       grid[y][x] = "7";
       sunCurrency -= 25;
     }
-    let plant;
+    
     if (hoveredPlant==="wallnut"){
 
       plant = new Plant(x,y,hoveredPlant,150);
     }
     else{
-      plant = new Plant(x,y,hoveredPlant,0);
+      plant = new Plant(x,y,hoveredPlant,40);
     }
     plantArray.push(plant);
     hoveredPlant = null;
