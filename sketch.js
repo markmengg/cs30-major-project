@@ -263,11 +263,11 @@ class Zombie {
 
   display() {
     if (this.state === "walk") {
-      image(this.walkingImage, this.x, this.y); 
+      image(brownZombieWalk, this.x, this.y); 
     }
-    else if (this.state === "eat") {
-      image(this.eatingImage, this.x, this.y); 
-    }
+    // else if (this.state === "eat") {
+    //   image(this.eatingImage, this.x, this.y); 
+    // }
 
   }
 
@@ -722,8 +722,10 @@ function draw() {
       initializeZombies();
 
       for (let i=0;i<zombieArray.length;i++){
-        zombieArray[i].display();
+        
         zombieArray[i].update(i);
+        zombieArray[i].display();
+        
       }
     }
     displayMouseXY();
@@ -1128,7 +1130,7 @@ function mousePressed() {
 }
 
 function zombieSpawner(zombie, health, attackImage) {
-  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.round(random(0, 5))*tileSizeY+60, zombie, health, 0.35, attackImage);
+  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(0, 5))*tileSizeY+60, zombie, health, 5, attackImage);
   zombieArray.push(newZombie);
 }
 
