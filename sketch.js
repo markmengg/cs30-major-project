@@ -214,26 +214,15 @@ class Plant{
 
 
 class Zombie {
-  constructor(x, y, zombieType, health, speed, eatingImage){
+  constructor(x, y, zombieType, health, speed, walkingImage, eatingImage){
     this.x = x;
     this.y = y;
     this.zombie = zombieType;
     this.health = health;
     this.dx = speed;
     this.state = "walk";
-    if (this.zombie === "zombie"){
-      this.eatingImg = brownZombieAttack;
-      this.walkingImg = brownZombieWalk;
-    }
-    else if(this.zombie === "cone"){
-      this.eatingImg = coneZombieAttack;
-      this.walkingImg = coneZombieWalk;
-    }
-  
-    else if(this.zombie === "bucket"){
-      this.eatingImg = bucketZombieAttack;
-      this.walkingImg = bucketZombieWalk;
-    }
+    this.walkingImage=walkingImage
+    this.eatingImage =eatingImage
   }
   
   update(arraylocation){
@@ -263,7 +252,7 @@ class Zombie {
 
   display() {
     if (this.state === "walk") {
-      image(brownZombieWalk, this.x, this.y); 
+      image(this.walkingImage, this.x, this.y); 
     }
     // else if (this.state === "eat") {
     //   image(this.eatingImage, this.x, this.y); 
@@ -444,7 +433,7 @@ let brownZombieStill, brownZombieWalk, brownZombieAttack;
 let coneZombieStill, coneZombieWalk, coneZombieAttack;
 let bucketZombieStill, bucketZombieWalk, bucketZombieAttack;
 
-
+let spawning = true
 
 
 
@@ -1129,21 +1118,26 @@ function mousePressed() {
 
 }
 
-function zombieSpawner(zombie, health, attackImage) {
-  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(0, 5))*tileSizeY+60, zombie, health, 5, attackImage);
+function zombieSpawner(zombie, health, walkingImage,attackImage) {
+  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(0, 5))*tileSizeY+60, zombie, health, 5, walkingImage, attackImage);
   zombieArray.push(newZombie);
 }
 
 function initializeZombies() {
-  for (let i = 0; i < firstLevel.length; i++){
-    if (firstLevel[i] === "zombie"){
-      zombieSpawner("zombie", 100, "GIFS/zombies/zombieattack.gif");
+  if (spawning===true){
+
+    for (let i = 0; i < firstLevel.length; i++){
+      if (firstLevel[i] === "zombie"){
+        zombieSpawner("zombie", 100, brownZombieWalk,brownZombieAttack);
+      }
+      else if (firstLevel[i] === "cone"){
+        zombieSpawner("cone", 250, coneZombieWalk,coneZombieAttack);
+      }
+      else if (firstLevel[i] === "bucket"){
+        zombieSpawner("bucket", 600, bucketZombieWalk,bucketZombieAttack);
+      }
     }
-    else if (firstLevel[i] === "cone"){
-      zombieSpawner("cone", 250, "GIFS/zombies/coneattack.gif");
-    }
-    else if (firstLevel[i] === "bucket"){
-      zombieSpawner("bucket", 600, "GIFS/zombies/bucketattack.gif");
-    }
+
   }
+  spawning= false
 }
