@@ -214,14 +214,14 @@ class Plant{
 
 
 class Zombie {
-  constructor(x, y, zombieType, health, speed){
+  constructor(x, y, zombieType, health, speed, eatingImage){
     this.x = x;
     this.y = y;
     this.zombie = zombieType;
     this.health = health;
     this.dx = speed;
     this.state = "walk";
-    if (this.zombie === "normal"){
+    if (this.zombie === "zombie"){
       this.eatingImg = brownZombieAttack;
       this.walkingImg = brownZombieWalk;
     }
@@ -268,9 +268,7 @@ class Zombie {
     else if (this.state === "eat") {
       image(this.eatingImage, this.x, this.y); 
     }
-    else if (this.state === "attack") {
-      image(this.attackingImage, this.x, this.y); 
-    }
+
   }
 
   move(){
@@ -487,7 +485,7 @@ let countdownStartTime = null;
 let sun;
 let pea;
 let sunCurrency = 50;
-let firstLevel = ["zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, ["cone", "zombie"], 17, "bucket", 6, "zombie", 20, ["cone", "zombie", "zombie"], 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, ["bucket", "cone"], 9, "cone", 6, "zombie", 21, "largewave", 4, ["bucket", "cone", "cone", "zombie"], 5, ["bucket", "bucket", "cone", "cone", "zombie"], 5, ["cone", "cone", "zombie", "zombie","zombie"], "end"];
+let firstLevel = ["zombie", "zombie", "zombie", "zombie", "zombie", "cone", "zombie", "cone", "zombie", "bucket", "zombie", "cone", "zombie", "zombie", "zombie", "bucket", "cone", "cone", "zombie", "bucket", "cone", "cone", "zombie", "largewave", "bucket", "cone", "cone", "zombie","bucket", "bucket", "cone", "cone", "zombie", "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
 let gamemode = null;
 
@@ -643,11 +641,11 @@ function backstage(){
 }
 
 function plantsdefaultfns(){
-  // for (let i=0;i<plantArray.length;i++){
-  //   if (plantArray[i].health<=0){
-  //     plantArray.splice(i,1);
-  //   }
-  // }
+  for (let i=0;i<plantArray.length;i++){
+    if (plantArray[i].health<=0||plantArray[i].plant===null){
+      plantArray.splice(i,1);
+    }
+  }
   
   for (let plant of plantArray){
     if (plant.plant==="sunflower"){
@@ -721,7 +719,12 @@ function draw() {
       backstage();
       plantsdefaultfns();
       displaySunCurrency();
+      initializeZombies();
 
+      for (let i=0;i<zombieArray.length;i++){
+        zombieArray[i].display();
+        zombieArray[i].update(i);
+      }
     }
     displayMouseXY();
     
@@ -1102,7 +1105,7 @@ function toggleCell(x, y) {
       plant = new Plant(x,y,hoveredPlant,150);
     }
     else{
-      plant = new Plant(x,y,hoveredPlant,0);
+      plant = new Plant(x,y,hoveredPlant,40);
     }
     plantArray.push(plant);
     hoveredPlant = null;
@@ -1124,26 +1127,21 @@ function mousePressed() {
 
 }
 
-function zombieSpawner(zombie, health, animationFrame) {
-  let newZombie = new Zombie(width - tileSizeX * 0.7, Math.round(random(-0.4, 4.4)), zombie, health, 0.35, animationFrame);
+function zombieSpawner(zombie, health, attackImage) {
+  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.round(random(0, 5))*tileSizeY+60, zombie, health, 0.35, attackImage);
   zombieArray.push(newZombie);
 }
 
 function initializeZombies() {
-  if (Array.isArray(gamemode[levelposition])){
-    for (let i = 0; i < gamemode[levelposition].length; i++){
-      if (gamemode[levelposition][i][0] === "z"){
-        zombiespawner("zombie", 100, "GIFS/zombies/zombieattack.gif");
-      }
-      else if (gamemode[levelposition][i][0] === "c"){
-        zombiespawner("cone", 250, "GIFS/zombies/coneattack.gif");
-      }
-      else if (gamemode[levelposition][i][0] === "b"){
-        zombiespawner("bucket", 600, "GIFS/zombies/bucketattack.gif");
-      }
+  for (let i = 0; i < firstLevel.length; i++){
+    if (firstLevel[i] === "zombie"){
+      zombieSpawner("zombie", 100, "GIFS/zombies/zombieattack.gif");
     }
-    levelposition++;
-    leveltimer = new Timer(10);
-    leveltimer.start();
+    else if (firstLevel[i] === "cone"){
+      zombieSpawner("cone", 250, "GIFS/zombies/coneattack.gif");
+    }
+    else if (firstLevel[i] === "bucket"){
+      zombieSpawner("bucket", 600, "GIFS/zombies/bucketattack.gif");
+    }
   }
 }
