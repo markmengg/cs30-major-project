@@ -219,7 +219,7 @@ class Zombie {
     this.y = y;
     this.zombie = zombieType;
     this.health = health;
-    this.dx = speed;
+    this.dx = speed * zombieSpeedModifier;
     this.state = "walk";
     this.walkingImage=walkingImage
     this.eatingImage =eatingImage
@@ -477,6 +477,7 @@ let sunCurrency = 50;
 let firstLevel = ["zombie", "zombie", "zombie", "zombie", "zombie", "cone", "zombie", "cone", "zombie", "bucket", "zombie", "cone", "zombie", "zombie", "zombie", "bucket", "cone", "cone", "zombie", "bucket", "cone", "cone", "zombie", "largewave", "bucket", "cone", "cone", "zombie","bucket", "bucket", "cone", "cone", "zombie", "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
 let gamemode = null;
+const zombieSpeedModifier = 0.05;
 
 
 // Sizing Variables
@@ -1119,12 +1120,12 @@ function mousePressed() {
 }
 
 function zombieSpawner(zombie, health, walkingImage,attackImage) {
-  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(0, 5))*tileSizeY+60, zombie, health, 5, walkingImage, attackImage);
+  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(-1, 4))*tileSizeY+60, zombie, health, 5, walkingImage, attackImage);
   zombieArray.push(newZombie);
 }
 
 function initializeZombies() {
-  if (spawning===true){
+  if (spawning === true){
 
     for (let i = 0; i < firstLevel.length; i++){
       if (firstLevel[i] === "zombie"){
@@ -1136,8 +1137,10 @@ function initializeZombies() {
       else if (firstLevel[i] === "bucket"){
         zombieSpawner("bucket", 600, bucketZombieWalk,bucketZombieAttack);
       }
+      else if (firstLevel[i] === "end"){
+        spawning = false;
+      }
     }
 
   }
-  spawning= false
 }
