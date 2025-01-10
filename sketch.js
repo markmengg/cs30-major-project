@@ -1,13 +1,15 @@
 // Extra for Experts:
 
 
-//peagif for Pea-display
 //Pea-colliding after zombie
 // Alpha value of hovered plants, blacked out emblems for the packets
 // pea shoot only when theres a zombie
 
 // TO DO LIST -- Finish classes and composition classes for all of the plants. create collisions between the zombies and plants (arrays? grid?).
-// Figure out the built in timer, 
+// Figure out the built in timer, '
+
+
+
 class Timer {
   // Store the duration and start the timer
   constructor( _duration, start = false ) {
@@ -221,8 +223,8 @@ class Zombie {
     this.health = health;
     this.dx = speed * zombieSpeedModifier;
     this.state = "walk";
-    this.walkingImage=walkingImage
-    this.eatingImage =eatingImage
+    this.walkingImage=walkingImage;
+    this.eatingImage =eatingImage;
   }
   
   update(arraylocation){
@@ -433,8 +435,8 @@ let brownZombieStill, brownZombieWalk, brownZombieAttack;
 let coneZombieStill, coneZombieWalk, coneZombieAttack;
 let bucketZombieStill, bucketZombieWalk, bucketZombieAttack;
 
-let spawning = true
-
+let spawning = false;
+let finishSpawning = false;
 
 
 // Grid (9x5)
@@ -474,7 +476,7 @@ let countdownStartTime = null;
 let sun;
 let pea;
 let sunCurrency = 50;
-let firstLevel = ["zombie", "zombie", "zombie", "zombie", "zombie", "cone", "zombie", "cone", "zombie", "bucket", "zombie", "cone", "zombie", "zombie", "zombie", "bucket", "cone", "cone", "zombie", "bucket", "cone", "cone", "zombie", "largewave", "bucket", "cone", "cone", "zombie","bucket", "bucket", "cone", "cone", "zombie", "cone", "cone", "zombie", "zombie","zombie", "end"];
+let firstLevel = [0,"zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 4, "bucket", "cone", "cone", "zombie", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
 let gamemode = null;
 const zombieSpeedModifier = 0.05;
@@ -506,6 +508,10 @@ let plantArray = [];
 
 
 let suntimer;
+let plantingTimer;
+let spawningCooldown;
+let tempvalue;
+
 
 
 
@@ -602,6 +608,10 @@ function setup() {
   sunSize =  tileSizeX*0.75;
   peaSize = tileSizeX*0.4;
   suntimer =  new Timer(2000);
+  spawningCooldown = new Timer(5);
+  spawningCooldown.pause();
+  
+  
 }
 
 function backstage(){
@@ -688,10 +698,13 @@ function draw() {
     if (gameState === "pregame") {
       
       pregameCameraFWD.pan();
+      let t =5000;
+      plantingTimer = new Timer(t);
     } 
     else {
       pregameCameraBWD.pan();
       readySetPlant();
+      
     }
     if (gameState === "gameStart"){
       // for (let y =0; y<5; y++){
@@ -709,8 +722,7 @@ function draw() {
       backstage();
       plantsdefaultfns();
       displaySunCurrency();
-      initializeZombies();
-
+      zombieSpawning();
       for (let i=0;i<zombieArray.length;i++){
         
         zombieArray[i].update(i);
@@ -990,6 +1002,7 @@ function readySetPlant() {
       gameState = "gameStart";
     }
   }
+  
 }
 
 
@@ -1011,6 +1024,7 @@ function gameTime() {
   image(cherryBombPacket, 660, 8, 55, 78);
   image(chomperPacket, 726, 8, 55, 78);
   image(potatoMinePacket, 792, 8, 55, 78);
+  
 }
 
 
@@ -1126,21 +1140,76 @@ function zombieSpawner(zombie, health, walkingImage,attackImage) {
 
 function initializeZombies() {
   if (spawning === true){
+    
+    // if (Number.isInteger(firstLevel[levelPosition])){
+    //   let tempvalue = firstLevel[levelPosition] * 1000;
+    //   levelPosition++;
+    //   spawningCooldown = new Timer(tempvalue);
+    //   spawningCooldown.start();
+    // }
+
+    
+    // else if (Array.isArray(firstLevel[levelPosition])) {
+    //   for (let i = 0; i < firstLevel[levelPosition].length; i++){
+
+    //     if (firstLevel[levelPosition] === "z" && spawningCooldown.expired()){
+    //       zombieSpawner("zombie", 100, brownZombieWalk,brownZombieAttack);
+    //     }
+    //     else if (firstLevel[levelPosition] === "c" && spawningCooldown.expired()){
+    //       zombieSpawner("cone", 250, coneZombieWalk,coneZombieAttack);
+    //     }
+    //     else if (firstLevel[levelPosition] === "b" && spawningCooldown.expired()){
+    //       zombieSpawner("bucket", 600, bucketZombieWalk,bucketZombieAttack);
+    //     }
+    //     else if (firstLevel[levelPosition] === "e" && spawningCooldown.expired()){
+    //       finishSpawning = true;
+    //     }
+    //   }
+    //   levelPosition++;
+    // }
 
     for (let i = 0; i < firstLevel.length; i++){
-      if (firstLevel[i] === "zombie"){
+      if (Number.isInteger(firstLevel[levelPosition])){
+        let tempvalue = firstLevel[levelPosition] * 1000;
+        levelPosition++;
+        spawningCooldown = new Timer(tempvalue);
+        spawningCooldown.start();
+      }
+
+      if (firstLevel[levelPosition] === "zombie" && spawningCooldown.expired()){
         zombieSpawner("zombie", 100, brownZombieWalk,brownZombieAttack);
+        levelPosition++;
       }
-      else if (firstLevel[i] === "cone"){
+      else if (firstLevel[levelPosition] === "cone" && spawningCooldown.expired()){
         zombieSpawner("cone", 250, coneZombieWalk,coneZombieAttack);
+        levelPosition++;
       }
-      else if (firstLevel[i] === "bucket"){
+      else if (firstLevel[levelPosition] === "bucket" && spawningCooldown.expired()){
         zombieSpawner("bucket", 600, bucketZombieWalk,bucketZombieAttack);
+        levelPosition++;
       }
-      else if (firstLevel[i] === "end"){
-        spawning = false;
+      else if (firstLevel[levelPosition] === "end" && spawningCooldown.expired()){
+        finishSpawning = true;
+        levelPosition++;
       }
     }
-
+    
   }
+
+}
+
+
+
+
+
+function zombieSpawning() {
+  if (plantingTimer.expired()&&finishSpawning===false){
+    spawning = true;
+    
+  }
+  else{
+    spawning=false;
+  }
+  
+  initializeZombies();
 }
