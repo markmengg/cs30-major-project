@@ -418,14 +418,15 @@ let menuScreen;
 
 // Game Sounds
 let backgroundMusic;
-let lobbyMusic;
 let brainsSound;
 let peaHitSound;
 let peaShotSound;
 let sunCollectSound;
 let zombieGroanSound;
 let zombiesAreComingSound;
-let boomSound;
+let readySetPlantSound;
+let plantingSound;
+let clickSound;
 
 
 // Plant Bar
@@ -501,7 +502,9 @@ let levelPosition = 0;
 let gamemode = null;
 const zombieSpeedModifier = 0.05;
 let playMusic = true;
-let hasPlayed = false;
+let RSPhasPlayed = false;
+let zombiesComingHasPlayed = false;
+let gameMusicHasPlayed = false;
 
 
 // Sizing Variables
@@ -614,14 +617,15 @@ function preload() {
 
   // Load Sounds
   backgroundMusic = loadSound("sounds/background.mp3");
-  lobbyMusic = loadSound("sounds/lobby.mp3");
   brainsSound = loadSound("sounds/brains.mp3");
   peaHitSound = loadSound("sounds/peaHit.mp3");
   peaShotSound = loadSound("sounds/peaShot.mp3");
   sunCollectSound = loadSound("sounds/sunCollect.mp3");
   zombieGroanSound = loadSound("sounds/zombie.mp3");
   zombiesAreComingSound = loadSound("sounds/zombiesAreComing.mp3");
-  boomSound = loadSound("sounds/boom.wav");
+  readySetPlantSound = loadSound("sounds/readySetPlantSound.mp3");
+  plantingSound = loadSound("sounds/plantSound.mp3");
+  clickSound = loadSound("sounds/click.wav");
 }
 
 
@@ -640,7 +644,7 @@ function setup() {
   suntimer =  new Timer(2000);
   spawningCooldown = new Timer(5);
   spawningCooldown.pause();
-  
+  backgroundMusic.amp(0.035);
   
 }
 
@@ -723,17 +727,16 @@ function draw() {
   
   // Handle different game states
   if (modeState === "menu") {
-
     startMenu();
   }
   if (modeState === "adventure"){
-
+    
     cutSides();
     
     if (gameState === "pregame") {
       
       pregameCameraFWD.pan();
-      let t = 5000;
+      let t = 13000;
       plantingTimer = new Timer(t);
     } 
     else {
@@ -742,7 +745,7 @@ function draw() {
       
     }
     if (gameState === "gameStart"){
-
+      backgroundMusicPlay();
       gameTime();
       detectPacketInteractions();
       displayPlantSeeds();
@@ -974,10 +977,12 @@ function mouseReleased() {
 
   if (modeState === "menu") {
     if (mouseX >= 946 && mouseX <= 1451 && mouseY > 98 && mouseY < 260) {
+      clickSound.play();
       modeState = "adventure";
       
     }
     else if (mouseX >= 1430 * xPositionScale && mouseX <= 1517 * xPositionScale && mouseY > 699 * yPositionScale && mouseY < 841 * yPositionScale) {
+      clickSound.play();
       window.close();
     }
   }
@@ -986,11 +991,13 @@ function mouseReleased() {
     if (gameState === "gameStart"){
       if (mouseX >= 855  && mouseX <= 1037  && mouseY > 0  && mouseY < 34 ) {
         paused = true;
+        clickSound.play();
         gamePause();
       }
       if (paused) {
         if (mouseX >= 373  && mouseX <= 709  && mouseY > 550  && mouseY < 612 ) {
           paused = false;
+          clickSound.play();
           gameResume();
         }
       }
@@ -1013,40 +1020,26 @@ function readySetPlant() {
   let elapsedTime = millis() - countdownStartTime;
 
   if (elapsedTime >= 2000) {
-    let messageDisplayTime = 1000;
+    let messageDisplayTime = 700;
     let messageIndex = Math.floor((elapsedTime - 2000) / messageDisplayTime);
 
     if (messageIndex < countdownMessages.length) {
       let currentMessage = countdownMessages[messageIndex];
       if (currentMessage === "ready") {
         image(readyMessage, (width / 2 - readyMessage.width / 2 + 125 +300) * xPositionScale, (height / 2 - readyMessage.height / 2 - 25) * yPositionScale);
-        if (hasPlayed === false){
-          boomSound.play();
-          hasPlayed = true;
+        if (RSPhasPlayed === false){
+          readySetPlantSound.play();
+          RSPhasPlayed = true;
           if (frameCount % 40 === 0) {
-            hasPlayed = false;
+            RSPhasPlayed = false;
           }
         }
       }
       else if (currentMessage === "set") {
         image(setMessage, (width / 2 - setMessage.width / 2 + 125+300) * xPositionScale, (height / 2 - setMessage.height / 2 - 25) * yPositionScale);
-        if (hasPlayed === false){
-          boomSound.play();
-          hasPlayed = true;
-          if (frameCount % 60 === 0) {
-            hasPlayed = false;
-          }
-        }
       }
       else if (currentMessage === "plant") {
         image(plantMessage, (width / 2 - plantMessage.width / 2 + 125+300) * xPositionScale, (height / 2 - plantMessage.height / 2 - 25) * yPositionScale);
-        if (hasPlayed === false){
-          boomSound.play();
-          hasPlayed = true;
-          if (frameCount % 60 === 0) {
-            hasPlayed = false;
-          }
-        }
       }
     }
     else {
@@ -1075,6 +1068,7 @@ function gameTime() {
   image(cherryBombPacket, 660, 8, 55, 78);
   image(chomperPacket, 726, 8, 55, 78);
   image(potatoMinePacket, 792, 8, 55, 78);
+  
   
 }
 
@@ -1131,31 +1125,40 @@ function toggleCell(x, y) {
     if (grid[y][x] === "0" && hoveredPlant === "sunflower"){
       grid[y][x] = "1";
       sunCurrency -= 50;
+      plantingSound.play();
     }
     else if (grid[y][x] === "0" && hoveredPlant === "peashooter"){
       grid[y][x] = "2";
       sunCurrency -= 100;
+      plantingSound.play();
     }
     else if (grid[y][x] === "0" && hoveredPlant === "repeater"){
       grid[y][x] = "3";
       sunCurrency -= 200;
+      plantingSound.play();
     }
     else if (grid[y][x] === "0" && hoveredPlant === "wallnut"){
       grid[y][x] = "4";
       sunCurrency -= 50;
+      plantingSound.play();
     }
     else if (grid[y][x] === "0" && hoveredPlant === "cherrybomb"){
       grid[y][x] = "5";
       sunCurrency -= 150;
+      plantingSound.play();
     }
     else if (grid[y][x] === "0" && hoveredPlant === "chomper"){
       grid[y][x] = "6";
       sunCurrency -= 150;
+      plantingSound.play();
     }
     else if (grid[y][x] === "0" && hoveredPlant === "potatomine"){
       grid[y][x] = "7";
       sunCurrency -= 25;
+      plantingSound.play();
     }
+
+
     let plant;
     if (hoveredPlant==="wallnut"){
 
@@ -1231,6 +1234,13 @@ function initializeZombies() {
 function zombieSpawning() {
   if (plantingTimer.expired()&&finishSpawning===false){
     spawning = true;
+    if (zombiesComingHasPlayed === false){
+      zombiesAreComingSound.play();
+      zombiesComingHasPlayed = true;
+      if (frameCount % 40 === 0) {
+        zombiesComingHasPlayed = false;
+      }
+    }
     
   }
   else{
@@ -1240,3 +1250,12 @@ function zombieSpawning() {
   initializeZombies();
 }
 
+function backgroundMusicPlay() {
+  if (gameMusicHasPlayed === false){
+    backgroundMusic.play();
+    gameMusicHasPlayed = true;
+    if (frameCount % 40 === 0) {
+      gameMusicHasPlayed = false;
+    }
+  }
+}
