@@ -192,6 +192,7 @@ class Plant{
       let pea = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
       peaArray.push(pea);
       this.peaTimer = new Timer(1500);
+      peaShotSound.play();
     }
   }
 
@@ -202,6 +203,7 @@ class Plant{
       peaArray.push(pea1);
       peaArray.push(pea2);
       this.peaTimer = new Timer(1500);
+      peaShotSound.play();
     }
   }
 
@@ -290,6 +292,7 @@ class Pea{
         this.hit = true
       }
     }
+
   }
 
 
@@ -305,6 +308,7 @@ class Pea{
   display(){
     if(!this.hit){
       image(pea,this.x,this.y,peaSize,peaSize);
+
     }
   }
   
@@ -356,6 +360,7 @@ class Sun {
       sunArray.splice(arraylocation,1);
       sunCurrency += 25;
     }
+    sunCollectSound.play();
   }
 
   display() {
@@ -410,6 +415,18 @@ let setMessage;
 let plantMessage;
 let menuButton;
 let menuScreen;
+
+// Game Sounds
+let backgroundMusic;
+let lobbyMusic;
+let brainsSound;
+let peaHitSound;
+let peaShotSound;
+let sunCollectSound;
+let zombieGroanSound;
+let zombiesAreComingSound;
+let boomSound;
+
 
 // Plant Bar
 let plantBar;
@@ -483,6 +500,8 @@ let firstLevel = [0,"zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zomb
 let levelPosition = 0;
 let gamemode = null;
 const zombieSpeedModifier = 0.05;
+let playMusic = true;
+let hasPlayed = false;
 
 
 // Sizing Variables
@@ -509,7 +528,7 @@ let plantArray = [];
 
 
 
-
+// Timing Values
 let suntimer;
 let plantingTimer;
 let spawningCooldown;
@@ -542,7 +561,6 @@ function preload() {
   repeater = loadImage("GIFs/plants/repeater.gif");
 
   // Zombie GIFs
-
   zombieDie = loadImage("GIFs/zombies/zombiedie.gif");
   zombieBurnt = loadImage("GIFs/zombies/generalZombieBurnt.webp");
   zombieHead = loadImage("GIFs/zombies/zombiehead.gif");
@@ -560,7 +578,6 @@ function preload() {
   bucketZombieAttack = loadImage("GIFs/zombies/bucketattack.gif");
 
   // Plant Bar Itemms
-  
   plantBar = loadImage("selectionscreen/bar.png");
   sunflowerPacket = loadImage("packets/sunflower.webp");
   peashooterPacket = loadImage("packets/peashooter.webp");
@@ -569,7 +586,6 @@ function preload() {
   wallnutPacket = loadImage("packets/wallnut.webp");
   chomperPacket = loadImage("packets/chomper.webp");
   repeaterPacket = loadImage("packets/repeater.webp");
-
 
 
   // Load images
@@ -595,6 +611,17 @@ function preload() {
   plantMessage = loadImage("Game Messages/plant.png");
   menuButton = loadImage("menus/pausemenu/home.png");
   menuScreen = loadImage("menus/pausemenu/menuscreen.png");
+
+  // Load Sounds
+  backgroundMusic = loadSound("sounds/background.mp3");
+  lobbyMusic = loadSound("sounds/lobby.mp3");
+  brainsSound = loadSound("sounds/brains.mp3");
+  peaHitSound = loadSound("sounds/peaHit.mp3");
+  peaShotSound = loadSound("sounds/peaShot.mp3");
+  sunCollectSound = loadSound("sounds/sunCollect.mp3");
+  zombieGroanSound = loadSound("sounds/zombie.mp3");
+  zombiesAreComingSound = loadSound("sounds/zombiesAreComing.mp3");
+  boomSound = loadSound("sounds/boom.wav");
 }
 
 
@@ -696,6 +723,7 @@ function draw() {
   
   // Handle different game states
   if (modeState === "menu") {
+
     startMenu();
   }
   if (modeState === "adventure"){
@@ -705,7 +733,7 @@ function draw() {
     if (gameState === "pregame") {
       
       pregameCameraFWD.pan();
-      let t =5000;
+      let t = 5000;
       plantingTimer = new Timer(t);
     } 
     else {
@@ -714,14 +742,7 @@ function draw() {
       
     }
     if (gameState === "gameStart"){
-      // for (let y =0; y<5; y++){
-      //   for (let x=0;x<9;x++){
-      //     if (grid[y][x]==="1"){
-      //       fill("yellow")
-      //       rect(lawnmower.width+x*tileSizeX,bg_topFence.height+y*tileSizeY,tileSizeX,tileSizeY)
-      //     }
-      //   }
-      // }
+
       gameTime();
       detectPacketInteractions();
       displayPlantSeeds();
@@ -999,12 +1020,33 @@ function readySetPlant() {
       let currentMessage = countdownMessages[messageIndex];
       if (currentMessage === "ready") {
         image(readyMessage, (width / 2 - readyMessage.width / 2 + 125 +300) * xPositionScale, (height / 2 - readyMessage.height / 2 - 25) * yPositionScale);
+        if (hasPlayed === false){
+          boomSound.play();
+          hasPlayed = true;
+          if (frameCount % 40 === 0) {
+            hasPlayed = false;
+          }
+        }
       }
       else if (currentMessage === "set") {
         image(setMessage, (width / 2 - setMessage.width / 2 + 125+300) * xPositionScale, (height / 2 - setMessage.height / 2 - 25) * yPositionScale);
+        if (hasPlayed === false){
+          boomSound.play();
+          hasPlayed = true;
+          if (frameCount % 60 === 0) {
+            hasPlayed = false;
+          }
+        }
       }
       else if (currentMessage === "plant") {
         image(plantMessage, (width / 2 - plantMessage.width / 2 + 125+300) * xPositionScale, (height / 2 - plantMessage.height / 2 - 25) * yPositionScale);
+        if (hasPlayed === false){
+          boomSound.play();
+          hasPlayed = true;
+          if (frameCount % 60 === 0) {
+            hasPlayed = false;
+          }
+        }
       }
     }
     else {
@@ -1143,39 +1185,14 @@ function mousePressed() {
 }
 
 function zombieSpawner(zombie, health, walkingImage,attackImage) {
+  zombieGroanSound.play();
   let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(-1, 4))*tileSizeY+60, zombie, health, 5, walkingImage, attackImage);
   zombieArray.push(newZombie);
 }
 
 function initializeZombies() {
   if (spawning === true){
-    
-    // if (Number.isInteger(firstLevel[levelPosition])){
-    //   let tempvalue = firstLevel[levelPosition] * 1000;
-    //   levelPosition++;
-    //   spawningCooldown = new Timer(tempvalue);
-    //   spawningCooldown.start();
-    // }
-
-    
-    // else if (Array.isArray(firstLevel[levelPosition])) {
-    //   for (let i = 0; i < firstLevel[levelPosition].length; i++){
-
-    //     if (firstLevel[levelPosition] === "z" && spawningCooldown.expired()){
-    //       zombieSpawner("zombie", 100, brownZombieWalk,brownZombieAttack);
-    //     }
-    //     else if (firstLevel[levelPosition] === "c" && spawningCooldown.expired()){
-    //       zombieSpawner("cone", 250, coneZombieWalk,coneZombieAttack);
-    //     }
-    //     else if (firstLevel[levelPosition] === "b" && spawningCooldown.expired()){
-    //       zombieSpawner("bucket", 600, bucketZombieWalk,bucketZombieAttack);
-    //     }
-    //     else if (firstLevel[levelPosition] === "e" && spawningCooldown.expired()){
-    //       finishSpawning = true;
-    //     }
-    //   }
-    //   levelPosition++;
-    // }
+ 
 
     for (let i = 0; i < firstLevel.length; i++){
       if (Number.isInteger(firstLevel[levelPosition])){
@@ -1222,3 +1239,4 @@ function zombieSpawning() {
   
   initializeZombies();
 }
+
