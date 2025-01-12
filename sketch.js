@@ -228,6 +228,7 @@ class Zombie {
   }
   
   update(arraylocation){
+    
     if (this.state === "walk"){
       this.move();
     }
@@ -276,25 +277,27 @@ class Pea{
     this.hit = false;
   }
 
-  // colliding(){
-  //   if 
-  // }
+  zombieCollision(zombie) {
+    const collisionDistance = 5; // Adjust as needed
 
-  update(arraylocation){
-    if (!this.hit&&this.x<3000){
-      this.x+=this.vx;
-    }
-    else if(this.hit){
-      let timer = new Timer(200);
-      if (!timer.expired()){
-        this.hiteffect();
-      }
-      else{
-        peaArray.splice(arraylocation,1);
+    return (Math.abs(this.x - zombie.x) < collisionDistance && Math.abs(this.y - zombie.y) < 80);
+  }
+  
+  hitting(){
+    for (let z of zombieArray){
+      if (this.zombieCollision(z)){
+        z.health-=10
+        this.hit = true
       }
     }
-    else{
-      peaArray.splice(arraylocation,1);
+  }
+
+
+  update(arraylocation) {
+    if (this.hit || this.x >= 3000) {
+      peaArray.splice(arraylocation, 1);
+    } else {
+      this.x += this.vx;
     }
   }
 
@@ -628,6 +631,7 @@ function backstage(){
   }
 
 
+
   for (let sun of sunArray){
     sun.update();
     sun.display();
@@ -670,7 +674,10 @@ function displaySunCurrency() {
 function draw() {
   background(220);
 
-  
+  for (let i=0;i<peaArray.length;i++){
+
+    peaArray[i].hitting()
+  }
 
 
 
@@ -727,7 +734,9 @@ function draw() {
         
         zombieArray[i].update(i);
         zombieArray[i].display();
-        
+        if (zombieArray[i].health<=0){
+          zombieArray.splice(i,1)
+        }
       }
     }
     displayMouseXY();
