@@ -180,14 +180,14 @@ class Plant{
   }
 
   zombiedetect(zombie){
-    return(Math.floor((zombie.y-53)/tileSizeY)===this.y)
+    return Math.floor((zombie.y-53)/tileSizeY)===this.y;
   }
 
   produceSun(){
     if (this.plant === "sunflower"&& this.sunTimer.expired()){
       let sun = new Sun(random(bg_house.width+this.x*tileSizeX,bg_house.width+(this.x+1)*tileSizeX),tileSizeY * (this.y + 1.65),tileSizeY*this.y+bg_topFence.height, "plant");
       sunArray.push(sun);
-      this.sunTimer = new Timer(10000);
+      this.sunTimer = new Timer(13000);
     }
   }
 
@@ -250,26 +250,26 @@ class Zombie {
   eat(){
     for (let plant of plantArray){
       if(this.colliding(plant)){
-        plant.health-=10;
+        plant.health-=0.15;
+
       }
     }
   }
 
   colliding(plant){
-    let x = Math.floor((this.x-lawnmower.width-300)/tileSizeX);
-    let y = Math.floor((this.y-bg_topFence.height)/tileSizeY);
-    let xp = Math.floor((plant.x-lawnmower.width-300)/tileSizeX);
-    let yp = Math.floor((plant.y-bg_topFence.height)/tileSizeY);
-    return x===xp&&y===yp;
+    let x = Math.floor((this.x-lawnmower.width-300+tileSizeX)/tileSizeX);
+    let y = Math.floor((this.y-50)/tileSizeY);
+
+    return x===plant.x&&y===plant.y;
   }
 
   display() {
     if (this.state === "walk") {
       image(this.walkingImage, this.x, this.y); 
     }
-    // else if (this.state === "eat") {
-    //   image(this.eatingImage, this.x, this.y); 
-    // }
+    else if (this.state === "eat") {
+      image(this.eatingImage, this.x, this.y); 
+    }
 
   }
 
@@ -290,14 +290,14 @@ class Pea{
   zombieCollision(zombie) {
     const collisionDistance = 5; // Adjust as needed
 
-    return (Math.abs(this.x - zombie.x) < collisionDistance && Math.abs(this.y - zombie.y) < 80);
+    return Math.abs(this.x - zombie.x) < collisionDistance && Math.abs(this.y - zombie.y) < 80;
   }
   
   hitting(){
     for (let z of zombieArray){
       if (this.zombieCollision(z)){
-        z.health-=10
-        this.hit = true
+        z.health-=10;
+        this.hit = true;
       }
     }
 
@@ -307,7 +307,8 @@ class Pea{
   update(arraylocation) {
     if (this.hit || this.x >= 3000) {
       peaArray.splice(arraylocation, 1);
-    } else {
+    }
+    else {
       this.x += this.vx;
     }
   }
@@ -421,11 +422,13 @@ let sm_quit_hovered;
 let readyMessage;
 let setMessage;
 let plantMessage;
+let youLostMessage;
 let menuButton;
 let menuScreen;
 
 // Game Sounds
 let backgroundMusic;
+let loseMusic;
 let brainsSound;
 let peaHitSound;
 let peaShotSound;
@@ -508,7 +511,7 @@ let sunCurrency = 50;
 let firstLevel = [0,"zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 4, "bucket", "cone", "cone", "zombie", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
 let gamemode = null;
-const zombieSpeedModifier = 0.05;
+const zombieSpeedModifier = 0.055;
 let playMusic = true;
 let RSPhasPlayed = false;
 let zombiesComingHasPlayed = false;
@@ -620,11 +623,13 @@ function preload() {
   readyMessage = loadImage("Game Messages/ready.png");
   setMessage = loadImage("Game Messages/set.png");
   plantMessage = loadImage("Game Messages/plant.png");
+  youLostMessage = loadImage("Game Messages/zombiesWon.webp");
   menuButton = loadImage("menus/pausemenu/home.png");
   menuScreen = loadImage("menus/pausemenu/menuscreen.png");
 
   // Load Sounds
   backgroundMusic = loadSound("sounds/background.mp3");
+  loseMusic = loadSound("sounds/loseMusic.mp3");
   brainsSound = loadSound("sounds/brains.mp3");
   peaHitSound = loadSound("sounds/peaHit.mp3");
   peaShotSound = loadSound("sounds/peaShot.mp3");
@@ -653,11 +658,15 @@ function setup() {
   spawningCooldown = new Timer(5);
   spawningCooldown.pause();
   backgroundMusic.amp(0.035);
-  
+  loseMusic.amp(0.6);
 }
 
 function backstage(){
-  //sun
+  for (let zombie of zombieArray){
+    if (zombie.x <= 200){
+      gameState = "lost";
+    }
+  }
   
 
   if (suntimer.expired()){
@@ -685,7 +694,8 @@ function backstage(){
 
 function plantsdefaultfns(){
   for (let i=0;i<plantArray.length;i++){
-    if (plantArray[i].health<=0||plantArray[i].plant===null){
+    if (plantArray[i].health<=0){
+      grid[plantArray[i].y][plantArray[i].x]="0";
       plantArray.splice(i,1);
     }
   }
@@ -715,7 +725,7 @@ function draw() {
 
   for (let i=0;i<peaArray.length;i++){
 
-    peaArray[i].hitting()
+    peaArray[i].hitting();
   }
 
 
@@ -767,11 +777,27 @@ function draw() {
         zombieArray[i].update(i);
         zombieArray[i].display();
         if (zombieArray[i].health<=0){
-          zombieArray.splice(i,1)
+          zombieArray.splice(i,1);
+        }
+        for (let plant of plantArray){
+          if (zombieArray[i].colliding(plant)){
+            zombieArray[i].state = "eat";
+          }
+          else{
+            zombieArray[i].state = "walk";
+          }
         }
       }
     }
-    displayMouseXY();
+
+    if (gameState === "lost"){
+      image(youLostMessage, width/2, height/2 - 250);
+      backgroundMusic.stop();
+      noLoop();
+      loseMusic.play();
+    }
+    
+    displayMouseXY(); // DELET AT END
     
   }
   
@@ -1085,6 +1111,7 @@ function gamePause() {
   if (paused === true){
     noLoop();
     image(menuScreen, width/2 + 95, height/4 - 55);
+    backgroundMusic.stop();
   }
 }
 
