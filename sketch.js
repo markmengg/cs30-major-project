@@ -179,6 +179,10 @@ class Plant{
     
   }
 
+  zombiedetect(zombie){
+    return(Math.floor((zombie.y-53)/tileSizeY)===this.y)
+  }
+
   produceSun(){
     if (this.plant === "sunflower"&& this.sunTimer.expired()){
       let sun = new Sun(random(bg_house.width+this.x*tileSizeX,bg_house.width+(this.x+1)*tileSizeX),tileSizeY * (this.y + 1.65),tileSizeY*this.y+bg_topFence.height, "plant");
@@ -188,11 +192,15 @@ class Plant{
   }
 
   shootPea(){
-    if(this.plant==="peashooter"&&this.peaTimer.expired()){
-      let pea = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
-      peaArray.push(pea);
-      this.peaTimer = new Timer(1500);
-      peaShotSound.play();
+    for (let zombie of zombieArray){
+
+      if(this.plant==="peashooter"&&this.peaTimer.expired()&&this.zombiedetect(zombie)){
+        let pea = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+        
+        peaArray.push(pea);
+        this.peaTimer = new Timer(1500);
+        peaShotSound.play();
+      }
     }
   }
 
