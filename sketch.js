@@ -205,13 +205,16 @@ class Plant{
   }
 
   repeaterAttack(){
-    if(this.plant==="repeater"&&this.peaTimer.expired()){
-      let pea2 = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
-      let pea1 = new Pea(300+(this.x+1)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
-      peaArray.push(pea1);
-      peaArray.push(pea2);
-      this.peaTimer = new Timer(1500);
-      peaShotSound.play();
+    for (let zombie of zombieArray){
+
+      if(this.plant==="repeater"&&this.peaTimer.expired()&&this.zombiedetect(zombie)){
+        let pea2 = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+        let pea1 = new Pea(300+(this.x+1)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+        peaArray.push(pea1);
+        peaArray.push(pea2);
+        this.peaTimer = new Timer(1500);
+        peaShotSound.play();
+      }
     }
   }
 
@@ -238,12 +241,24 @@ class Zombie {
   }
   
   update(arraylocation){
-    
-    if (this.state === "walk"){
-      this.move();
+    for (let plant of plantArray){
+      if(this.colliding(plant)){
+        this.state = "eat"
+      
+      }
+      else{
+        this.state="walk"
+      }
+      
     }
-    if (this.state === "eat"){
-      this.eat();
+    if (this.state==="walk"){
+      this.move()
+    }
+    else if(this.state==="eat"){
+      this.eat()
+    }
+    else{
+      this.state = "walk"
     }
   }
 
@@ -256,20 +271,19 @@ class Zombie {
   }
 
   colliding(plant){
-    let x = Math.floor((this.x-lawnmower.width-300)/tileSizeX);
-    let y = Math.floor((this.y-bg_topFence.height)/tileSizeY);
-    let xp = Math.floor((plant.x-lawnmower.width-300)/tileSizeX);
-    let yp = Math.floor((plant.y-bg_topFence.height)/tileSizeY);
-    return x===xp&&y===yp;
+    let x = Math.floor((this.x-500-lawnmower.width+3*tileSizeX)/tileSizeX);
+    let y = Math.floor((this.y-53)/tileSizeY);
+
+    return Math.abs(x-plant.x<=2)&&y===plant.y;
   }
 
   display() {
     if (this.state === "walk") {
       image(this.walkingImage, this.x, this.y); 
     }
-    // else if (this.state === "eat") {
-    //   image(this.eatingImage, this.x, this.y); 
-    // }
+    else if (this.state === "eat") {
+      image(this.eatingImage, this.x, this.y); 
+    }
 
   }
 
@@ -686,6 +700,7 @@ function backstage(){
 function plantsdefaultfns(){
   for (let i=0;i<plantArray.length;i++){
     if (plantArray[i].health<=0||plantArray[i].plant===null){
+      grid[plantArray[i].y][plantArray[i].x]=0
       plantArray.splice(i,1);
     }
   }
