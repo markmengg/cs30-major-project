@@ -243,31 +243,26 @@ class Zombie {
       this.move();
     }
     if (this.state === "eat"){
-      this.eat();
+      return
     }
   }
 
-  eat(){
-    for (let plant of plantArray){
-      if(this.colliding(plant)){
-        plant.health-=0.15;
-
-      }
-    }
+  eat(plant){
+    plant.health-=0.15
   }
 
   colliding(plant){
-    let x = Math.floor((this.x-lawnmower.width-300)/tileSizeX);
+    let x = Math.floor((this.x-lawnmower.width-300)/tileSizeX+0.5);
     let y = Math.floor((this.y-50)/tileSizeY);
 
-    return x===plant.x&&y===plant.y;
+    return Math.abs(x-plant.x<0.3)&&y===plant.y;
   }
 
   display() {
     if (this.state === "walk") {
       image(this.walkingImage, this.x, this.y); 
     }
-    else if (this.state === "eat") {
+      if (this.state === "eat") {
       image(this.eatingImage, this.x, this.y); 
     }
 
@@ -703,8 +698,12 @@ function plantsdefaultfns(){
       grid[plantArray[i].y][plantArray[i].x]="0";
       plantArray.splice(i,1);
     }
+    else if (plantArray[i].plant===null){
+      plantArray.splice(i,1)
+    }
   }
-  
+
+
   for (let plant of plantArray){
     if (plant.plant==="sunflower"){
       plant.produceSun();
@@ -778,20 +777,21 @@ function draw() {
       displaySunCurrency();
       zombieSpawning();
       for (let i=0;i<zombieArray.length;i++){
-        
-        zombieArray[i].update(i);
-        zombieArray[i].display();
-        if (zombieArray[i].health<=0){
-          zombieArray.splice(i,1);
-        }
         for (let plant of plantArray){
           if (zombieArray[i].colliding(plant)){
             zombieArray[i].state = "eat";
+            zombieArray[i].eat(plant)
           }
           else{
             zombieArray[i].state = "walk";
           }
         }
+        zombieArray[i].update(i);
+        zombieArray[i].display();
+        if (zombieArray[i].health<=0){
+          zombieArray.splice(i,1);
+        }
+        
       }
     }
 
