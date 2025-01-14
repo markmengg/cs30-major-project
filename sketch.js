@@ -257,7 +257,7 @@ class Zombie {
   }
 
   colliding(plant){
-    let x = Math.floor((this.x-lawnmower.width-300+tileSizeX)/tileSizeX);
+    let x = Math.floor((this.x-lawnmower.width-300)/tileSizeX);
     let y = Math.floor((this.y-50)/tileSizeY);
 
     return x===plant.x&&y===plant.y;
@@ -288,9 +288,9 @@ class Pea{
   }
 
   zombieCollision(zombie) {
-    const collisionDistance = 5; // Adjust as needed
+    const collisionDistance = 10; // Adjust as needed
 
-    return Math.abs(this.x - zombie.x) < collisionDistance && Math.abs(this.y - zombie.y) < 80;
+    return Math.abs(this.x - zombie.x) < collisionDistance && Math.abs(this.y - zombie.y) < 75;
   }
   
   hitting(){
@@ -315,18 +315,21 @@ class Pea{
 
   
   display(){
-    if(!this.hit){
-      image(pea,this.x,this.y,peaSize,peaSize);
-
+    // if(!this.hit){
+    //   image(pea,this.x,this.y,peaSize,peaSize);
+    if (this.hit) {
+      for (let displayAmount = 0; displayAmount < 100; displayAmount++){
+        image(peaHit, this.x, this.y, peaSize, peaSize);
+      }
+      peaHitSound.play();
+    } 
+    else {
+      image(pea, this.x, this.y, peaSize, peaSize);
     }
   }
+}
   
 
-
-  // hiteffect(){
-  //   display(peaeffect,this.x,this.y)
-  // }
-}
 
 
 class Sun {
@@ -507,6 +510,7 @@ let countdownIndex = 0;
 let countdownStartTime = null;
 let sun;
 let pea;
+let peaHit;
 let sunCurrency = 50;
 let firstLevel = [0,"zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 4, "bucket", "cone", "cone", "zombie", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
@@ -564,6 +568,7 @@ function preload() {
   // Game GIFs/Images
   sun = loadImage("GIFs/sun.gif");
   pea = loadImage("GIFs/peaBullet.png");
+  peaHit = loadImage("GIFs/peaHit.png");
 
   // Plant GIFs
   peashooter = loadImage("GIFs/plants/peashooter.gif");
