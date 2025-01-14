@@ -1,12 +1,12 @@
+// Mark Meng and Michael Zhu
+// Plants vs. Zombies Remake
+// Jan 21, 2025
+// Computer Science 30
+
 // Extra for Experts:
 
 
-//Pea-colliding after zombie
-// Alpha value of hovered plants, blacked out emblems for the packets
-// pea shoot only when theres a zombie
-
-// TO DO LIST -- Finish classes and composition classes for all of the plants. create collisions between the zombies and plants (arrays? grid?).
-// Figure out the built in timer, '
+// TO DO LIST -- highlight where plant is hovered before placement, plant packet delays, timing features.
 
 
 
@@ -229,30 +229,44 @@ class Plant{
 
 
 class Zombie {
-  constructor(x, y, zombieType, health, speed, walkingImage, eatingImage, deadImage){
+  constructor(x, y, zombieType, health, speed, walkingImage, eatingImage, deadImage, headImage){
     this.x = x;
     this.y = y;
     this.zombie = zombieType;
     this.health = health;
     this.dx = speed * zombieSpeedModifier;
     this.state = "walk";
-    this.walkingImage=walkingImage;
-    this.eatingImage =eatingImage;
+    this.walkingImage = walkingImage;
+    this.eatingImage = eatingImage;
     this.deadImage = deadImage;
-    this.deadTimer = newTimer(2000);
+    this.headImage = headImage;
+    this.deadTimer = new Timer(2000);
   }
   
   update(arraylocation){
     
     if (this.state === "walk"){
       this.move();
+      if (this.health<=0){
+        this.state="dead";
+        this.headImage.reset();
+        this.deadImage.reset();
+        this.deadTimer = new Timer(2000);
+      }
     }
     else if (this.state === "eat"){
-      return;
+      if (this.health<=0){
+        this.state="dead";
+        this.headImage.reset();
+        this.deadImage.reset();
+        this.deadTimer = new Timer(2000);
+      }
     }
-    else if (this.health <= 0){
-      this.state = "dead";
-      this.deadTimer.start();
+    else if (this.state==="dead"){
+      if (this.deadTimer.expired()){
+
+        zombieArray.splice(arraylocation, 1);
+      }
     }
   }
 
@@ -279,7 +293,7 @@ class Zombie {
     }
     else if (this.state === "dead") {
       image(this.deadImage, this.x, this.y); 
-      image(this.zombieHead, this.x, this.y); 
+      image(this.headImage, this.x, this.y);
     }
   }
 
@@ -325,8 +339,6 @@ class Pea{
 
   
   display(){
-    // if(!this.hit){
-    //   image(pea,this.x,this.y,peaSize,peaSize);
     if (this.hit) {
       for (let displayAmount = 0; displayAmount < 100; displayAmount++){
         image(peaHit, this.x, this.y, peaSize, peaSize);
@@ -570,7 +582,7 @@ let tempvalue;
 
 
 
-// ---------- [ START OF CODE] --------------
+// --------------- [ START OF CODE ] -------------------
 
 function preload() {
   plantBar = loadImage("selectionscreen/bar.png");
@@ -791,43 +803,26 @@ function draw() {
       plantsdefaultfns();
       displaySunCurrency();
       zombieSpawning();
-      // for (let i=0;i<zombieArray.length;i++){
-      //   for (let plant of plantArray){
-      //     if (zombieArray[i].colliding(plant)){
-      //       zombieArray[i].state = "eat";
-      //       zombieArray[i].eat(plant)
-      //     }
-      //     else{
-      //       zombieArray[i].state = "walk";
-      //     }
-      //   }
-      //   zombieArray[i].update(i);
-      //   zombieArray[i].display();
-      //   if (zombieArray[i].health<=0){
-      //     zombieArray.splice(i,1);
-      //   }
-        
-      // }
+
 
 
       for (let i = 0; i < zombieArray.length; i++) {
         let isEating = false; // Track if the zombie is eating any plant
         for (let plant of plantArray) {
-          if (zombieArray[i].colliding(plant)) {
+          if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"){
             zombieArray[i].state = "eat";
             zombieArray[i].eat(plant);
             isEating = true; // Mark as eating
             break; // Stop checking other plants for this zombie
           }
         }
-        if (!isEating) {
+        if (!isEating&&zombieArray[i].state!=="dead") {
           zombieArray[i].state = "walk"; // Only set to walk if no collision was detected
         }
-        zombieArray[i].update(i);
         zombieArray[i].display();
-        if (zombieArray[i].health <= 0) {
-          zombieArray.splice(i, 1);
-        }
+        zombieArray[i].update(i);
+        
+
       }
 
     }
@@ -1264,9 +1259,9 @@ function mousePressed() {
 
 }
 
-function zombieSpawner(zombie, health, walkingImage,attackImage) {
+function zombieSpawner(zombie, health, walkingImage, attackImage, deadImage, headImage) {
   zombieGroanSound.play();
-  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(-1, 4))*tileSizeY+60, zombie, health, 5, walkingImage, attackImage);
+  let newZombie = new Zombie(300+lawnmower.width+lawn.width, bg_topFence.height+Math.floor(random(-1, 4))*tileSizeY+60, zombie, health, 5, walkingImage, attackImage, deadImage, headImage);
   zombieArray.push(newZombie);
 }
 
@@ -1283,15 +1278,15 @@ function initializeZombies() {
       }
 
       if (firstLevel[levelPosition] === "zombie" && spawningCooldown.expired()){
-        zombieSpawner("zombie", 100, brownZombieWalk,brownZombieAttack);
+        zombieSpawner("zombie", 100, brownZombieWalk, brownZombieAttack, zombieDie, zombieHead);
         levelPosition++;
       }
       else if (firstLevel[levelPosition] === "cone" && spawningCooldown.expired()){
-        zombieSpawner("cone", 250, coneZombieWalk,coneZombieAttack);
+        zombieSpawner("cone", 250, coneZombieWalk, coneZombieAttack, zombieDie, zombieHead);
         levelPosition++;
       }
       else if (firstLevel[levelPosition] === "bucket" && spawningCooldown.expired()){
-        zombieSpawner("bucket", 600, bucketZombieWalk,bucketZombieAttack);
+        zombieSpawner("bucket", 600, bucketZombieWalk, bucketZombieAttack, zombieDie, zombieHead);
         levelPosition++;
       }
       else if (firstLevel[levelPosition] === "end" && spawningCooldown.expired()){
