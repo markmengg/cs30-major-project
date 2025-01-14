@@ -229,7 +229,7 @@ class Plant{
 
 
 class Zombie {
-  constructor(x, y, zombieType, health, speed, walkingImage, eatingImage){
+  constructor(x, y, zombieType, health, speed, walkingImage, eatingImage, deadImage){
     this.x = x;
     this.y = y;
     this.zombie = zombieType;
@@ -238,6 +238,8 @@ class Zombie {
     this.state = "walk";
     this.walkingImage=walkingImage;
     this.eatingImage =eatingImage;
+    this.deadImage = deadImage;
+    this.deadTimer = newTimer(2000);
   }
   
   update(arraylocation){
@@ -245,13 +247,17 @@ class Zombie {
     if (this.state === "walk"){
       this.move();
     }
-    if (this.state === "eat"){
-      return
+    else if (this.state === "eat"){
+      return;
+    }
+    else if (this.health <= 0){
+      this.state = "dead";
+      this.deadTimer.start();
     }
   }
 
-  eat(plant){
-    plant.health-=0.15
+  eat(plant){ 
+    plant.health-=0.15;
   }
 
   colliding(plant){
@@ -260,7 +266,7 @@ class Zombie {
 
     // return Math.abs(x-plant.x<1)&&y===plant.y;
 
-    let px = 274+lawnmower.width+(plant.x)*tileSizeX+20
+    let px = 274+lawnmower.width+plant.x*tileSizeX+20;
     return Math.abs(px-this.x)<20&&y===plant.y;
   }
 
@@ -268,10 +274,13 @@ class Zombie {
     if (this.state === "walk") {
       image(this.walkingImage, this.x, this.y); 
     }
-      if (this.state === "eat") {
+    else if (this.state === "eat") {
       image(this.eatingImage, this.x, this.y); 
     }
-
+    else if (this.state === "dead") {
+      image(this.deadImage, this.x, this.y); 
+      image(this.zombieHead, this.x, this.y); 
+    }
   }
 
   move(){
@@ -705,7 +714,7 @@ function plantsdefaultfns(){
       plantArray.splice(i,1);
     }
     else if (plantArray[i].plant===null){
-      plantArray.splice(i,1)
+      plantArray.splice(i,1);
     }
   }
 
@@ -809,17 +818,17 @@ function draw() {
             zombieArray[i].eat(plant);
             isEating = true; // Mark as eating
             break; // Stop checking other plants for this zombie
-    }
-  }
-          if (!isEating) {
-            zombieArray[i].state = "walk"; // Only set to walk if no collision was detected
-  }
-          zombieArray[i].update(i);
-          zombieArray[i].display();
-          if (zombieArray[i].health <= 0) {
-            zombieArray.splice(i, 1);
-  }
-}
+          }
+        }
+        if (!isEating) {
+          zombieArray[i].state = "walk"; // Only set to walk if no collision was detected
+        }
+        zombieArray[i].update(i);
+        zombieArray[i].display();
+        if (zombieArray[i].health <= 0) {
+          zombieArray.splice(i, 1);
+        }
+      }
 
     }
 
