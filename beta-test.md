@@ -16,3 +16,4 @@
 - The potato mine, cherry bomb, and chomper would be really cool additions if you figured out how to make it work
 - The main menu buttons are slightly off at times
 - More music and sound effects would be cool and make the game feel more complete
+- More levels would be great
