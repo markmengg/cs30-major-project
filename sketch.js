@@ -497,8 +497,8 @@ let finishSpawning = false;
 
 
 // Grid (9x5)
-const ROWS = 9;
-const COLUMNS = 5;
+const ROWS = 5;
+const COLUMNS = 9;
 
 let grid = [
   ["0","0","0","0","0","0","0","0","0"],
@@ -794,6 +794,7 @@ function draw() {
       
     }
     if (gameState === "gameStart"){
+      highlightMouseRowColumn();
       backgroundMusicPlay();
       gameTime();
       detectPacketInteractions();
@@ -1234,7 +1235,7 @@ function toggleCell(x, y) {
     let plant;
     if (hoveredPlant==="wallnut"){
 
-      plant = new Plant(x,y,hoveredPlant,150);
+      plant = new Plant(x,y,hoveredPlant,300);
     }
     else{
       plant = new Plant(x,y,hoveredPlant,40);
@@ -1328,6 +1329,27 @@ function backgroundMusicPlay() {
     gameMusicHasPlayed = true;
     if (frameCount % 40 === 0) {
       gameMusicHasPlayed = false;
+    }
+  }
+}
+
+function highlightMouseRowColumn() {
+  let mouseCol = floor(mouseX / tileSizeX);
+  let mouseRow = floor(mouseY / tileSizeY);
+
+  if (hoveredPlant){
+    // Highlight rows
+    for (let r = 1; r < ROWS + 1; r++) {
+      noStroke();
+      fill(0, 0, 0, 55);
+      rect(mouseCol * tileSizeX + lawnmower.width + 265, r * tileSizeY, tileSizeX, tileSizeY);
+    }
+  
+    // Highlight columns
+    for (let c = 0; c < COLUMNS; c++) {
+      noStroke();
+      fill(0, 0, 0, 55);
+      rect(c * tileSizeX + lawnmower.width + 265, mouseRow * tileSizeY, tileSizeX, tileSizeY);
     }
   }
 }
