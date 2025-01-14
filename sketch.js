@@ -205,13 +205,16 @@ class Plant{
   }
 
   repeaterAttack(){
-    if(this.plant==="repeater"&&this.peaTimer.expired()){
-      let pea2 = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
-      let pea1 = new Pea(300+(this.x+1)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
-      peaArray.push(pea1);
-      peaArray.push(pea2);
-      this.peaTimer = new Timer(1500);
-      peaShotSound.play();
+    for (let zombie of zombieArray){
+
+      if(this.plant==="repeater"&&this.peaTimer.expired()&&this.zombiedetect(zombie)){
+        let pea2 = new Pea(300+(this.x+0.5)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+        let pea1 = new Pea(300+(this.x+1)*tileSizeX,bg_topFence.height+this.y*tileSizeY);
+        peaArray.push(pea1);
+        peaArray.push(pea2);
+        this.peaTimer = new Timer(1500);
+        peaShotSound.play();
+      }
     }
   }
 
@@ -252,10 +255,13 @@ class Zombie {
   }
 
   colliding(plant){
-    let x = Math.floor((this.x-lawnmower.width-300)/tileSizeX+0.5);
-    let y = Math.floor((this.y-50)/tileSizeY);
+    // let x = Math.floor((this.x-lawnmower.width-274)/tileSizeX+0.5);
+    let y = Math.floor((this.y-53)/tileSizeY);
 
-    return Math.abs(x-plant.x<0.3)&&y===plant.y;
+    // return Math.abs(x-plant.x<1)&&y===plant.y;
+
+    let px = 274+lawnmower.width+(plant.x)*tileSizeX+20
+    return Math.abs(px-this.x)<20&&y===plant.y;
   }
 
   display() {
@@ -776,23 +782,45 @@ function draw() {
       plantsdefaultfns();
       displaySunCurrency();
       zombieSpawning();
-      for (let i=0;i<zombieArray.length;i++){
-        for (let plant of plantArray){
-          if (zombieArray[i].colliding(plant)){
-            zombieArray[i].state = "eat";
-            zombieArray[i].eat(plant)
-          }
-          else{
-            zombieArray[i].state = "walk";
-          }
-        }
-        zombieArray[i].update(i);
-        zombieArray[i].display();
-        if (zombieArray[i].health<=0){
-          zombieArray.splice(i,1);
-        }
+      // for (let i=0;i<zombieArray.length;i++){
+      //   for (let plant of plantArray){
+      //     if (zombieArray[i].colliding(plant)){
+      //       zombieArray[i].state = "eat";
+      //       zombieArray[i].eat(plant)
+      //     }
+      //     else{
+      //       zombieArray[i].state = "walk";
+      //     }
+      //   }
+      //   zombieArray[i].update(i);
+      //   zombieArray[i].display();
+      //   if (zombieArray[i].health<=0){
+      //     zombieArray.splice(i,1);
+      //   }
         
-      }
+      // }
+
+
+      for (let i = 0; i < zombieArray.length; i++) {
+        let isEating = false; // Track if the zombie is eating any plant
+        for (let plant of plantArray) {
+          if (zombieArray[i].colliding(plant)) {
+            zombieArray[i].state = "eat";
+            zombieArray[i].eat(plant);
+            isEating = true; // Mark as eating
+            break; // Stop checking other plants for this zombie
+    }
+  }
+          if (!isEating) {
+            zombieArray[i].state = "walk"; // Only set to walk if no collision was detected
+  }
+          zombieArray[i].update(i);
+          zombieArray[i].display();
+          if (zombieArray[i].health <= 0) {
+            zombieArray.splice(i, 1);
+  }
+}
+
     }
 
     if (gameState === "lost"){
