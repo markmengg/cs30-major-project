@@ -219,6 +219,19 @@ class Plant{
   }
 
   cherryboom(){
+    
+    if (this.plant==="cherrybomb"&&this.boomTimer.expired()){
+      let x = 274+lawnmower.width+(this.x+0.5)*tileSizeX;
+      let y = bg_topFence.height+(this.y+0.5)*tileSizeY
+      for (let i =0;i<zombieArray.length;i++){
+        if (Math.abs(x-zombieArray[i].x)<tileSizeX*1.5&&Math.abs(y-zombieArray[i].y)<tileSizeY){
+          zombieArray[i].health=-1
+        }
+        
+      }
+      this.health = -1
+    }
+
      
   }
 
@@ -452,8 +465,10 @@ let readyMessage;
 let setMessage;
 let plantMessage;
 let youLostMessage;
+let hugeWaveMessage;
 let menuButton;
 let menuScreen;
+let trophyImage;
 
 // Game Sounds
 let backgroundMusic;
@@ -467,6 +482,8 @@ let zombiesAreComingSound;
 let readySetPlantSound;
 let plantingSound;
 let clickSound;
+let hugeWaveSound;
+let waveDefeatedSound;
 
 
 // Plant Bar
@@ -538,7 +555,7 @@ let sun;
 let pea;
 let peaHit;
 let sunCurrency = 50;
-let firstLevel = [0,"zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 4, "bucket", "cone", "cone", "zombie", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
+let firstLevel = [0, "zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 8, "bucket", "cone", "cone", "zombie", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
 let gamemode = null;
 const zombieSpeedModifier = 0.055;
@@ -546,6 +563,8 @@ let playMusic = true;
 let RSPhasPlayed = false;
 let zombiesComingHasPlayed = false;
 let gameMusicHasPlayed = false;
+let hugeWaveHasPlayed = false;
+let waveDefeatedHasPlayed = false;
 
 
 // Sizing Variables
@@ -655,8 +674,11 @@ function preload() {
   setMessage = loadImage("Game Messages/set.png");
   plantMessage = loadImage("Game Messages/plant.png");
   youLostMessage = loadImage("Game Messages/zombiesWon.webp");
+  hugeWaveMessage = loadImage("Game Messages/largewave.png");
+  trophyImage = loadImage("Game Messages/trophy.png");
   menuButton = loadImage("menus/pausemenu/home.png");
   menuScreen = loadImage("menus/pausemenu/menuscreen.png");
+  
 
   // Load Sounds
   backgroundMusic = loadSound("sounds/background.mp3");
@@ -670,6 +692,8 @@ function preload() {
   readySetPlantSound = loadSound("sounds/readySetPlantSound.mp3");
   plantingSound = loadSound("sounds/plantSound.mp3");
   clickSound = loadSound("sounds/click.wav");
+  hugeWaveSound = loadSound("sounds/hugeWave.mp3");
+  waveDefeatedSound = loadSound("sounds/wave-defeated.mp3");
 }
 
 
@@ -744,6 +768,9 @@ function plantsdefaultfns(){
     }
     if(plant.plant==="repeater"){
       plant.repeaterAttack();
+    }
+    if (plant.plant==="cherrybomb"){
+      plant.cherryboom()
     }
   }
 }
@@ -1294,18 +1321,42 @@ function initializeZombies() {
         zombieSpawner("bucket", 600, bucketZombieWalk, bucketZombieAttack, zombieDie, zombieHead);
         levelPosition++;
       }
-      else if (firstLevel[levelPosition] === "end" && spawningCooldown.expired()){
-        finishSpawning = true;
+      else if (firstLevel[levelPosition] === "largewave" && spawningCooldown.expired()){
+        image(hugeWaveMessage, width/2 - 20, height/6 - 300);
+        if (hugeWaveHasPlayed === false){
+          hugeWaveSound.play();
+          hugeWaveHasPlayed = true;
+          if (frameCount % 40 === 0) {
+            hugeWaveHasPlayed = false;
+          }
+        }
         levelPosition++;
+      }
+      else if (firstLevel[levelPosition] === "end" && spawningCooldown.expired()){
+
+        finishSpawning = true;
+        gameState = "won";
+        waveCleared();
       }
     }
     
+    
   }
-
 }
 
 
-
+function waveCleared() {
+  if (gameState === "won"){
+    image(trophyImage, width/2, height/2);
+    if (waveDefeatedHasPlayed === false){
+      waveDefeatedSound.play();
+      waveDefeatedHasPlayed = true;
+      if (frameCount % 40 === 0) {
+        waveDefeatedHasPlayed = false;
+      }
+    }
+  }
+}
 
 
 function zombieSpawning() {
