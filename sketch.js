@@ -174,7 +174,7 @@ class Plant{
     this.state = "idle";
     this.sunTimer = new Timer(5000);
     this.peaTimer = new Timer(1500);
-    
+    this.boomTimer = new Timer(1700)
 
     
   }
@@ -216,6 +216,10 @@ class Plant{
         peaShotSound.play();
       }
     }
+  }
+
+  cherryboom(){
+     
   }
 
   display(){
