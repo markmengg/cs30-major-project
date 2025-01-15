@@ -224,7 +224,7 @@ class Plant{
       let x = 274+lawnmower.width+(this.x+0.5)*tileSizeX;
       let y = bg_topFence.height+(this.y+0.5)*tileSizeY
       for (let i =0;i<zombieArray.length;i++){
-        if (Math.abs(x-zombieArray[i].x)<tileSizeX*1.5&&Math.abs(y-zombieArray[i].y)<tileSizeY){
+        if (Math.abs(x-zombieArray[i].x)<200&&Math.abs(y-zombieArray[i].y)<200){
           zombieArray[i].health=-1
         }
         
