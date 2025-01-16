@@ -6,7 +6,7 @@
 // Extra for Experts:
 
 
-// TO DO LIST -- highlight where plant is hovered before placement, plant packet delays, timing features.
+// TO DO LIST -- plant packet cooldowns, winning screen, spudow and cherry explosion
 
 
 
@@ -174,8 +174,8 @@ class Plant{
     this.state = "idle";
     this.sunTimer = new Timer(5000);
     this.peaTimer = new Timer(1500);
-    this.boomTimer = new Timer(1700)
-
+    this.boomTimer = new Timer(1700);
+    this.potatoTimer = new Timer(2000);
     
   }
 
@@ -188,6 +188,14 @@ class Plant{
       let sun = new Sun(random(bg_house.width+this.x*tileSizeX,bg_house.width+(this.x+1)*tileSizeX),tileSizeY * (this.y + 1.65),tileSizeY*this.y+bg_topFence.height, "plant");
       sunArray.push(sun);
       this.sunTimer = new Timer(13000);
+    }
+  }
+
+  potato(){
+    if (this.plant==="potatomine"&&this.potatoTimer.expired()){
+      if(this.state==="idle"){
+        this.state="ready";
+      }
     }
   }
 
@@ -222,21 +230,42 @@ class Plant{
     
     if (this.plant==="cherrybomb"&&this.boomTimer.expired()){
       let x = 274+lawnmower.width+(this.x+0.5)*tileSizeX;
-      let y = bg_topFence.height+(this.y+0.5)*tileSizeY
+      let y = bg_topFence.height+(this.y+0.5)*tileSizeY;
       for (let i =0;i<zombieArray.length;i++){
         if (Math.abs(x-zombieArray[i].x)<200&&Math.abs(y-zombieArray[i].y)<200){
-          zombieArray[i].health=-1
+          zombieArray[i].health=-1;
         }
         
       }
-      this.health = -1
+      this.health = -1;
     }
+  }
 
-     
+  wallnutDisplay() {
+    if (this.plant === "wallnut" && this.health > 200) {
+      wallnut = loadImage("GIFs/plants/wallnut.gif");
+    }
+    else if (this.plant === "wallnut" && this.health > 100) {
+      wallnut = loadImage("GIFs/plants/Wallnutcracked1.gif");
+    }
+    else if (this.plant === "wallnut" && this.health <= 100) {
+      wallnut = loadImage("GIFs/plants/Wallnutcracked2.gif");
+    }
   }
 
   display(){
-    image(plantType,this.x, this.y);
+    if(this.plant==="potatomine"){
+      if(this.state==="idle"){
+        image(unarmedpotato,this.x,this.y);
+      }
+      else if(this.state==="ready"){
+        image(potatoMine,this.x,this.y);
+      }
+    }
+    else{
+
+      image(plantType,this.x, this.y);
+    }
   }
 }
 
@@ -471,6 +500,7 @@ let setMessage;
 let plantMessage;
 let youLostMessage;
 let hugeWaveMessage;
+let spudow;
 let menuButton;
 let menuScreen;
 let trophyImage;
@@ -506,10 +536,18 @@ let repeaterPacket;
 let peashooter;
 let sunflower;
 let cherryBomb;
+let unarmedpotato;
 let potatoMine;
 let wallnut;
 let chomper, chomperEating;
 let repeater;
+
+let peashootercd;
+let sunflowercd;
+let cherryBombcd;
+let potatoMinecd;
+let wallnutcd;
+let repeatercd;
 
 
 // Zombies
@@ -559,11 +597,13 @@ let countdownStartTime = null;
 let sun;
 let pea;
 let peaHit;
+let potatoExplosion;
+
 let sunCurrency = 50;
 let firstLevel = [0, "zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 8, "bucket", "cone", "cone", "zombie", "bucket", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
 let gamemode = null;
-const zombieSpeedModifier = 0.055;
+const zombieSpeedModifier = 0.06;
 let playMusic = true;
 let RSPhasPlayed = false;
 let zombiesComingHasPlayed = false;
@@ -622,11 +662,13 @@ function preload() {
   sun = loadImage("GIFs/sun.gif");
   pea = loadImage("GIFs/peaBullet.png");
   peaHit = loadImage("GIFs/peaHit.png");
+  potatoExplosion = loadImage("GIFS/potatoexplode.png");
 
   // Plant GIFs
   peashooter = loadImage("GIFs/plants/peashooter.gif");
   sunflower = loadImage("GIFs/plants/sunflower.gif");
   cherrybomb = loadImage("GIFs/plants/cherrybomb.gif");
+  unarmedpotato = loadImage("GIFs/plants/unarmedpotato.png");
   potatoMine = loadImage("GIFs/plants/potato-mine.gif");
   wallnut = loadImage("GIFs/plants/wallnut.gif");
   chomper = loadImage("GIFs/plants/chomper.gif"), chomperEating = loadImage("GIFs/plants/chompereating.gif");
@@ -684,8 +726,12 @@ function preload() {
   youLostMessage = loadImage("Game Messages/zombiesWon.webp");
   hugeWaveMessage = loadImage("Game Messages/largewave.png");
   trophyImage = loadImage("Game Messages/trophy.png");
+  spudowMessage = loadImage("Game Messages/spudow.png");
+ 
+  
   menuButton = loadImage("menus/pausemenu/home.png");
   menuScreen = loadImage("menus/pausemenu/menuscreen.png");
+
   
 
   // Load Sounds
@@ -724,6 +770,9 @@ function setup() {
   hugeWaveTimer.pause();
   backgroundMusic.amp(0.035);
   loseMusic.amp(0.6);
+
+
+  // peashootercd = 
 }
 
 function backstage(){
@@ -773,14 +822,20 @@ function plantsdefaultfns(){
     if (plant.plant==="sunflower"){
       plant.produceSun();
     }
-    if (plant.plant==="peashooter"){
+    else if (plant.plant==="peashooter"){
       plant.shootPea();
     }
-    if(plant.plant==="repeater"){
+    else if (plant.plant==="repeater"){
       plant.repeaterAttack();
     }
-    if (plant.plant==="cherrybomb"){
-      plant.cherryboom()
+    else if (plant.plant==="cherrybomb"){
+      plant.cherryboom();
+    }
+    else if (plant.plant==="potatomine"){
+      plant.potato();
+    }
+    else if (plant.plant === "wallnut"){
+      plant.wallnutDisplay();
     }
   }
 }
@@ -847,13 +902,22 @@ function draw() {
       zombieSpawning();
       hugeWaveDisplay();
       waveCleared();
-      
+
 
 
 
       for (let i = 0; i < zombieArray.length; i++) {
         let isEating = false; // Track if the zombie is eating any plant
+
         for (let plant of plantArray) {
+          if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"&&plant.plant==="potatomine"&&plant.state==="ready"){
+
+            // image(spudow, 274 + lawnmower.width + x*tileSizeX + 20, bg_topFence.height+ y*tileSizeY);
+            // image(potatoExplosion, 274 + lawnmower.width + x*tileSizeX + 20, bg_topFence.height+ y*tileSizeY);
+            plant.health=-1;
+            zombieArray[i].health=-1;
+
+          }
           if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"){
             zombieArray[i].state = "eat";
             zombieArray[i].eat(plant);
@@ -1084,7 +1148,7 @@ function displayPlantSeeds() {
     image(chomper, mouseX + plantOffsetX, mouseY - plantOffsetY, chomperSizeX, chomperSizeY);
   }
   else if (hoveredPlant === "potatomine") {
-    image(potatoMine, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX, plantSizeY);
+    image(unarmedpotato, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX + 20, plantSizeY);
   }
 }
 
@@ -1226,8 +1290,18 @@ function drawGrid() {
         image(chomper, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY - 20, chomperSizeX, chomperSizeY);
       }
       else if(grid[y][x]==="7"){
-        image(potatoMine, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+        for (let plant of plantArray){
+          if (plant.x === x && plant.y=== y){
+            if (plant.state==="idle"){
+              image(unarmedpotato, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+            }
+            if (plant.state==="ready"){
+              image(potatoMine, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+            }
+          } 
+        }
       }
+
 
     }
   }
