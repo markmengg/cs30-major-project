@@ -8,6 +8,37 @@
 
 // TO DO LIST -- plant packet cooldowns, winning screen, spudow and cherry explosion
 
+class Explosion{
+  constructor(x,y,type,time){
+    this.x = x
+    this.y=y
+    this.type = type
+    this.timer = new Timer(time)
+  }
+
+
+  update(location){
+    if (this.timer.expired()){
+      explosionArray.splice(location,1)
+    }
+  }
+
+  display(){
+    if(this.type==="potato"){
+      
+      image(potatoExplosion, 274 + lawnmower.width + this.x*tileSizeX + 20-0.25*tileSizeX, bg_topFence.height+ this.y*tileSizeY,1.5*tileSizeX,1.3*tileSizeX);
+      image(spudow, 274 + lawnmower.width + this.x*tileSizeX + 20, bg_topFence.height+ this.y*tileSizeY,tileSizeX,0.5*tileSizeX);
+    }
+
+
+    if(this.type==="cherrybomb"){
+      image(cherrykaboom, 274 + lawnmower.width + (this.x-1.5)*tileSizeX + 20, bg_topFence.height+ (this.y-1)*tileSizeY,4*tileSizeX,3*tileSizeY);
+    }
+  }
+}
+
+
+
 
 
 class Timer {
@@ -233,10 +264,13 @@ class Plant{
       let y = bg_topFence.height+(this.y+0.5)*tileSizeY;
       for (let i =0;i<zombieArray.length;i++){
         if (Math.abs(x-zombieArray[i].x)<200&&Math.abs(y-zombieArray[i].y)<200){
-          zombieArray[i].health=-1;
+          zombieArray.splice(i,1)
+          return
         }
         
       }
+      let e = new Explosion(this.x,this.y,"cherrybomb",2000)
+      explosionArray.push(e)
       this.health = -1;
     }
   }
@@ -501,6 +535,7 @@ let plantMessage;
 let youLostMessage;
 let hugeWaveMessage;
 let spudow;
+let cherrykaboom
 let menuButton;
 let menuScreen;
 let trophyImage;
@@ -634,7 +669,7 @@ let peaArray = [];
 let sunArray = [];
 let zombieArray = [];
 let plantArray = [];
-
+let explosionArray=[]
 
 
 
@@ -726,8 +761,8 @@ function preload() {
   youLostMessage = loadImage("Game Messages/zombiesWon.webp");
   hugeWaveMessage = loadImage("Game Messages/largewave.png");
   trophyImage = loadImage("Game Messages/trophy.png");
-  spudowMessage = loadImage("Game Messages/spudow.png");
- 
+  spudow = loadImage("Game Messages/spudow.png");
+  cherrykaboom = loadImage("Game Messages/cherrykaboom.png")
   
   menuButton = loadImage("menus/pausemenu/home.png");
   menuScreen = loadImage("menus/pausemenu/menuscreen.png");
@@ -904,6 +939,10 @@ function draw() {
       waveCleared();
 
 
+      for (let i=0;i<explosionArray.length;i++){
+        explosionArray[i].display()
+        explosionArray[i].update(i)
+      }
 
 
       for (let i = 0; i < zombieArray.length; i++) {
@@ -912,10 +951,11 @@ function draw() {
         for (let plant of plantArray) {
           if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"&&plant.plant==="potatomine"&&plant.state==="ready"){
 
-            // image(spudow, 274 + lawnmower.width + x*tileSizeX + 20, bg_topFence.height+ y*tileSizeY);
-            // image(potatoExplosion, 274 + lawnmower.width + x*tileSizeX + 20, bg_topFence.height+ y*tileSizeY);
+            let explosiion = new Explosion(plant.x,plant.y,"potato",2000)
+            explosionArray.push(explosiion)
             plant.health=-1;
-            zombieArray[i].health=-1;
+            zombieArray.splice(i,1)
+            return
 
           }
           if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"){
