@@ -385,9 +385,10 @@ class Sun {
       this.velocity = -3;
       this.acell = 0.2;
     }
+    this.lifespanTimer = new Timer(10000, true);
   }
 
-  update() {
+  update(arraylocation) {
 
     // For the Sun coming from the Sky
     if (this.y <= this.finalY && !this.collected && this.mode === "sky") {
@@ -398,6 +399,10 @@ class Sun {
       this.y += this.dy;
       this.y += this.velocity;
       this.velocity +=this.acell;
+    }
+
+    if (this.lifespanTimer.expired() && !this.collected){
+      sunArray.splice(arraylocation, 1);
     }
   }
 
@@ -555,7 +560,7 @@ let sun;
 let pea;
 let peaHit;
 let sunCurrency = 50;
-let firstLevel = [0, "zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 8, "bucket", "cone", "cone", "zombie", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
+let firstLevel = [0, "zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 8, "bucket", "cone", "cone", "zombie", "bucket", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
 let levelPosition = 0;
 let gamemode = null;
 const zombieSpeedModifier = 0.055;
@@ -565,6 +570,8 @@ let zombiesComingHasPlayed = false;
 let gameMusicHasPlayed = false;
 let hugeWaveHasPlayed = false;
 let waveDefeatedHasPlayed = false;
+
+let showHugeWave = false;
 
 
 // Sizing Variables
@@ -595,6 +602,7 @@ let plantArray = [];
 let suntimer;
 let plantingTimer;
 let spawningCooldown;
+let hugeWaveTimer;
 let tempvalue;
 
 
@@ -712,6 +720,8 @@ function setup() {
   suntimer =  new Timer(2000);
   spawningCooldown = new Timer(5);
   spawningCooldown.pause();
+  hugeWaveTimer = new Timer(3000);
+  hugeWaveTimer.pause();
   backgroundMusic.amp(0.035);
   loseMusic.amp(0.6);
 }
@@ -835,6 +845,9 @@ function draw() {
       plantsdefaultfns();
       displaySunCurrency();
       zombieSpawning();
+      hugeWaveDisplay();
+      waveCleared();
+      
 
 
 
@@ -1322,21 +1335,13 @@ function initializeZombies() {
         levelPosition++;
       }
       else if (firstLevel[levelPosition] === "largewave" && spawningCooldown.expired()){
-        image(hugeWaveMessage, width/2 - 20, height/6 - 300);
-        if (hugeWaveHasPlayed === false){
-          hugeWaveSound.play();
-          hugeWaveHasPlayed = true;
-          if (frameCount % 40 === 0) {
-            hugeWaveHasPlayed = false;
-          }
-        }
+        showHugeWave = true;
+        hugeWaveTimer.start();
         levelPosition++;
       }
       else if (firstLevel[levelPosition] === "end" && spawningCooldown.expired()){
-
         finishSpawning = true;
         gameState = "won";
-        waveCleared();
       }
     }
     
@@ -1347,12 +1352,15 @@ function initializeZombies() {
 
 function waveCleared() {
   if (gameState === "won"){
-    image(trophyImage, width/2, height/2);
-    if (waveDefeatedHasPlayed === false){
-      waveDefeatedSound.play();
-      waveDefeatedHasPlayed = true;
-      if (frameCount % 40 === 0) {
-        waveDefeatedHasPlayed = false;
+    if (zombieArray.length === 0) {
+      levelPosition = 0;
+      image(trophyImage, width/2, height/2);
+      if (waveDefeatedHasPlayed === false){
+        waveDefeatedSound.play();
+        waveDefeatedHasPlayed = true;
+        if (frameCount % 40 === 0) {
+          waveDefeatedHasPlayed = false;
+        }
       }
     }
   }
@@ -1405,6 +1413,24 @@ function highlightMouseRowColumn() {
       noStroke();
       fill(0, 0, 0, 55);
       rect(c * tileSizeX + lawnmower.width + 265, mouseRow * tileSizeY, tileSizeX, tileSizeY);
+    }
+  }
+}
+
+function hugeWaveDisplay() {
+  if (showHugeWave === true){
+    image(hugeWaveMessage, width/2 - 20, height/6 - 300);
+    if (hugeWaveTimer.expired()){
+      showHugeWave = !showHugeWave;
+      hugeWaveTimer.start();
+      hugeWaveTimer.pause();
+    }
+    if (hugeWaveHasPlayed === false){
+      hugeWaveSound.play();
+      hugeWaveHasPlayed = true;
+      if (frameCount % 40 === 0) {
+        hugeWaveHasPlayed = false;
+      }
     }
   }
 }
