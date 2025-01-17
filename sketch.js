@@ -40,7 +40,6 @@ class Explosion{
 
 
 
-
 class Timer {
   // Store the duration and start the timer
   constructor( _duration, start = false ) {
@@ -196,6 +195,8 @@ class Camera{
   }
 }
 
+
+
 class Plant{
   constructor(x, y, plantType, health){
     this.y = y;
@@ -278,13 +279,13 @@ class Plant{
 
   wallnutDisplay() {
     if (this.plant === "wallnut" && this.health > 200) {
-      wallnut = loadImage("GIFs/plants/wallnut.gif");
+      image(wallnut,this.x,this.y);
     }
-    else if (this.plant === "wallnut" && this.health > 100) {
-      wallnut = loadImage("GIFs/plants/Wallnutcracked1.gif");
+    else if (this.plant === "wallnut" && this.health > 100&& this.health < 200) {
+      image(wallnutcracked1,this.x,this.y);
     }
     else if (this.plant === "wallnut" && this.health <= 100) {
-      wallnut = loadImage("GIFs/plants/Wallnutcracked2.gif");
+      image(wallnutcracked2,this.x,this.y);
     }
   }
 
@@ -303,9 +304,6 @@ class Plant{
     }
   }
 }
-
-
-
 
 
 
@@ -384,6 +382,7 @@ class Zombie {
 }
 
 
+
 class Pea{
   constructor(x,y){
     this.x = x;
@@ -421,9 +420,7 @@ class Pea{
   
   display(){
     if (this.hit) {
-      for (let displayAmount = 0; displayAmount < 20; displayAmount++){
-        image(peaHit, this.x, this.y, peaSize, peaSize);
-      }
+      image(peaHit, this.x, this.y, peaSize, peaSize);
       peaHitSound.play();
     } 
     else {
@@ -432,8 +429,6 @@ class Pea{
   }
 }
   
-
-
 
 class Sun {
   constructor(x, y, finalY, mode){
@@ -575,7 +570,7 @@ let sunflower;
 let cherryBomb;
 let unarmedpotato;
 let potatoMine;
-let wallnut;
+let wallnut, wallnutcracked1,wallnutcracked2;
 let chomper, chomperEating;
 let repeater;
 
@@ -708,6 +703,8 @@ function preload() {
   unarmedpotato = loadImage("GIFs/plants/unarmedpotato.png");
   potatoMine = loadImage("GIFs/plants/potato-mine.gif");
   wallnut = loadImage("GIFs/plants/wallnut.gif");
+  wallnutcracked1 = loadImage("GIFs/plants/Wallnutcracked1.gif");
+  wallnutcracked2 = loadImage("GIFs/plants/Wallnutcracked2.gif");
   chomper = loadImage("GIFs/plants/chomper.gif"), chomperEating = loadImage("GIFs/plants/chompereating.gif");
   repeater = loadImage("GIFs/plants/repeater.gif");
 
@@ -885,6 +882,9 @@ function displaySunCurrency() {
 }
 
 
+
+
+
 function draw() {
   background(220);
 
@@ -913,11 +913,11 @@ function draw() {
     startMenu();
   }
   if (modeState === "adventure"){
-    
+
     cutSides();
-    
+
     if (gameState === "pregame") {
-      
+      initializePacketTimers();
       pregameCameraFWD.pan();
       let t = 13000;
       plantingTimer = new Timer(t);
@@ -988,7 +988,7 @@ function draw() {
       loseMusic.play();
     }
     
-    displayMouseXY(); // DELET AT END
+    // displayMouseXY(); // DELET AT END
     
   }
   
@@ -1327,6 +1327,19 @@ function drawGrid() {
       }
       else if(grid[y][x]==="4"){
         image(wallnut, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+        for (let plant of plantArray){
+          if (plant.x === x && plant.y=== y){
+            if (plant.health>200){
+              image(wallnut, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+            }
+            if (plant.health<200&&plant.health>100){
+              image(wallnutcracked1, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+            }
+            if (plant.health<100){
+              image(wallnutcracked2, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+            }
+          } 
+        }
       }
       else if(grid[y][x]==="5"){
         image(cherrybomb, 274+lawnmower.width+x*tileSizeX, bg_topFence.height+ y*tileSizeY , cherrySizeX, cherrySizeY);
@@ -1358,40 +1371,46 @@ function drawGrid() {
 
 function toggleCell(x, y) {
   if (x>= 0 && y >= 0 && x < 9 && y < 5){
-    if (grid[y][x] === "0" && hoveredPlant === "sunflower"){
+    if (grid[y][x] === "0" && hoveredPlant === "sunflower" && sunflowercd.expired()){
       grid[y][x] = "1";
       sunCurrency -= 50;
       plantingSound.play();
+      sunflowercd = new Timer(5000);
     }
-    else if (grid[y][x] === "0" && hoveredPlant === "peashooter"){
+    else if (grid[y][x] === "0" && hoveredPlant === "peashooter" && peashootercd.expired()){
       grid[y][x] = "2";
       sunCurrency -= 100;
       plantingSound.play();
+      peashootercd = new Timer(6000);
     }
-    else if (grid[y][x] === "0" && hoveredPlant === "repeater"){
+    else if (grid[y][x] === "0" && hoveredPlant === "repeater" && repeatercd.expired()){
       grid[y][x] = "3";
       sunCurrency -= 200;
       plantingSound.play();
+      repeatercd = new Timer(6000);
     }
-    else if (grid[y][x] === "0" && hoveredPlant === "wallnut"){
+    else if (grid[y][x] === "0" && hoveredPlant === "wallnut" && wallnutcd.expired()){
       grid[y][x] = "4";
       sunCurrency -= 50;
       plantingSound.play();
+      wallnutcd = new Timer(15000);
     }
-    else if (grid[y][x] === "0" && hoveredPlant === "cherrybomb"){
+    else if (grid[y][x] === "0" && hoveredPlant === "cherrybomb" && cherryBombcd.expired()){
       grid[y][x] = "5";
       sunCurrency -= 150;
       plantingSound.play();
+      cherryBombcd = new Timer(10000);
     }
     else if (grid[y][x] === "0" && hoveredPlant === "chomper"){
       grid[y][x] = "6";
       sunCurrency -= 150;
       plantingSound.play();
     }
-    else if (grid[y][x] === "0" && hoveredPlant === "potatomine"){
+    else if (grid[y][x] === "0" && hoveredPlant === "potatomine" && potatoMinecd.expired()){
       grid[y][x] = "7";
       sunCurrency -= 25;
       plantingSound.play();
+      potatoMinecd = new Timer(12000);
     }
 
 
@@ -1538,7 +1557,7 @@ function highlightMouseRowColumn() {
 
 function hugeWaveDisplay() {
   if (showHugeWave === true){
-    image(hugeWaveMessage, width/2 - 20, height/6 - 300);
+    image(hugeWaveMessage, width/2 - 30, height/6 - 150);
     if (hugeWaveTimer.expired()){
       showHugeWave = !showHugeWave;
       hugeWaveTimer.start();
@@ -1551,5 +1570,20 @@ function hugeWaveDisplay() {
         hugeWaveHasPlayed = false;
       }
     }
+  }
+}
+
+function initializePacketTimers() {
+  sunflowercd = new Timer(1000);
+  peashootercd = new Timer(1000);
+  cherryBombcd = new Timer(1000);
+  potatoMinecd = new Timer(1000);
+  wallnutcd = new Timer(1000);
+  repeatercd = new Timer(1000);
+}
+
+function keyPressed() {
+  if (key === "e") {
+    hoveredPlant = null;
   }
 }
