@@ -10,16 +10,16 @@
 
 class Explosion{
   constructor(x,y,type,time){
-    this.x = x
-    this.y=y
-    this.type = type
-    this.timer = new Timer(time)
+    this.x = x;
+    this.y=y;
+    this.type = type;
+    this.timer = new Timer(time);
   }
 
 
   update(location){
     if (this.timer.expired()){
-      explosionArray.splice(location,1)
+      explosionArray.splice(location,1);
     }
   }
 
@@ -264,13 +264,13 @@ class Plant{
       let y = bg_topFence.height+(this.y+0.5)*tileSizeY;
       for (let i =0;i<zombieArray.length;i++){
         if (Math.abs(x-zombieArray[i].x)<200&&Math.abs(y-zombieArray[i].y)<200){
-          zombieArray.splice(i,1)
-          return
+          zombieArray.splice(i,1);
+          return;
         }
         
       }
-      let cherryExplosion = new Explosion(this.x,this.y,"cherrybomb",2000)
-      explosionArray.push(cherryExplosion)
+      let cherryExplosion = new Explosion(this.x,this.y,"cherrybomb",2000);
+      explosionArray.push(cherryExplosion);
       explosionSound.play();
       this.health = -1;
     }
@@ -421,7 +421,7 @@ class Pea{
   
   display(){
     if (this.hit) {
-      for (let displayAmount = 0; displayAmount < 100; displayAmount++){
+      for (let displayAmount = 0; displayAmount < 20; displayAmount++){
         image(peaHit, this.x, this.y, peaSize, peaSize);
       }
       peaHitSound.play();
@@ -536,7 +536,7 @@ let plantMessage;
 let youLostMessage;
 let hugeWaveMessage;
 let spudow;
-let cherrykaboom
+let cherrykaboom;
 let menuButton;
 let menuScreen;
 let trophyImage;
@@ -671,7 +671,7 @@ let peaArray = [];
 let sunArray = [];
 let zombieArray = [];
 let plantArray = [];
-let explosionArray=[]
+let explosionArray=[];
 
 
 
@@ -764,7 +764,7 @@ function preload() {
   hugeWaveMessage = loadImage("Game Messages/largewave.png");
   trophyImage = loadImage("Game Messages/trophy.png");
   spudow = loadImage("Game Messages/spudow.png");
-  cherrykaboom = loadImage("Game Messages/cherrykaboom.png")
+  cherrykaboom = loadImage("Game Messages/cherrykaboom.png");
   
   menuButton = loadImage("menus/pausemenu/home.png");
   menuScreen = loadImage("menus/pausemenu/menuscreen.png");
@@ -943,8 +943,8 @@ function draw() {
 
 
       for (let i=0;i<explosionArray.length;i++){
-        explosionArray[i].display()
-        explosionArray[i].update(i)
+        explosionArray[i].display();
+        explosionArray[i].update(i);
       }
 
 
@@ -955,12 +955,12 @@ function draw() {
           if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"&&plant.plant==="potatomine"&&plant.state==="ready"){
 
             
-            let potatoExplosion = new Explosion(plant.x,plant.y,"potato",2000)
-            explosionArray.push(potatoExplosion)
-            explosionSound.play()
+            let potatoExplosion = new Explosion(plant.x,plant.y,"potato",2000);
+            explosionArray.push(potatoExplosion);
+            explosionSound.play();
             plant.health=-1;
-            zombieArray.splice(i,1)
-            return
+            zombieArray.splice(i,1);
+            return;
 
           }
           if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"){
