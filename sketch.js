@@ -27,7 +27,7 @@ class Explosion{
     if(this.type==="potato"){
       
       image(potatoExplosion, 274 + lawnmower.width + this.x*tileSizeX + 20-0.25*tileSizeX, bg_topFence.height+ this.y*tileSizeY,1.5*tileSizeX,1.3*tileSizeX);
-      image(spudow, 274 + lawnmower.width + this.x*tileSizeX + 20, bg_topFence.height+ this.y*tileSizeY,tileSizeX,0.5*tileSizeX);
+      image(spudow, 274 + lawnmower.width + this.x*tileSizeX + 20, bg_topFence.height+ this.y*tileSizeY - 50,tileSizeX,0.5*tileSizeX);
     }
 
 
@@ -205,8 +205,8 @@ class Plant{
     this.state = "idle";
     this.sunTimer = new Timer(5000);
     this.peaTimer = new Timer(1500);
-    this.boomTimer = new Timer(1700);
-    this.potatoTimer = new Timer(2000);
+    this.boomTimer = new Timer(700);
+    this.potatoTimer = new Timer(13000);
     
   }
 
@@ -269,8 +269,9 @@ class Plant{
         }
         
       }
-      let e = new Explosion(this.x,this.y,"cherrybomb",2000)
-      explosionArray.push(e)
+      let cherryExplosion = new Explosion(this.x,this.y,"cherrybomb",2000)
+      explosionArray.push(cherryExplosion)
+      explosionSound.play();
       this.health = -1;
     }
   }
@@ -546,6 +547,7 @@ let loseMusic;
 let brainsSound;
 let peaHitSound;
 let peaShotSound;
+let explosionSound;
 let sunCollectSound;
 let zombieGroanSound;
 let zombiesAreComingSound;
@@ -783,6 +785,7 @@ function preload() {
   clickSound = loadSound("sounds/click.wav");
   hugeWaveSound = loadSound("sounds/hugeWave.mp3");
   waveDefeatedSound = loadSound("sounds/wave-defeated.mp3");
+  explosionSound = loadSound("sounds/explosion.mp3");
 }
 
 
@@ -951,8 +954,10 @@ function draw() {
         for (let plant of plantArray) {
           if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"&&plant.plant==="potatomine"&&plant.state==="ready"){
 
-            let explosiion = new Explosion(plant.x,plant.y,"potato",2000)
-            explosionArray.push(explosiion)
+            
+            let potatoExplosion = new Explosion(plant.x,plant.y,"potato",2000)
+            explosionArray.push(potatoExplosion)
+            explosionSound.play()
             plant.health=-1;
             zombieArray.splice(i,1)
             return
