@@ -7,6 +7,48 @@
 
 
 // TO DO LIST -- plant packet cooldowns, winning screen, spudow and cherry explosion
+class Lawnmower{
+  constructor(x,y){
+    this.x=x
+    this.y = y
+    this.active = false
+  }
+
+  update(){
+    if (this.active===true&&this.x<3000){
+      this.x+=10
+    }
+    for (let zombie of zombieArray){
+      if (this.colliding(zombie)){
+        zombie.health=-1
+        if(this.active===false){
+          this.active=true
+        }
+      }
+
+    }
+  }
+
+  display(){
+    image(mower,this.x,this.y,80,60)
+  }
+
+  colliding(zombie){
+    // let x = Math.floor((this.x-lawnmower.width-274)/tileSizeX+0.5);
+    let y = Math.floor((this.y-bg_topFence.height)/tileSizeY);
+    let zy = Math.floor((zombie.y-53)/tileSizeY)
+    let x = this.x+80
+    // return Math.abs(x-plant.x<1)&&y===plant.y;
+
+    // let px = 274+lawnmower.width+plant.x*tileSizeX+20;
+    return Math.abs(zombie.x-this.x)<10&&y===zy;
+  }
+
+
+}
+
+
+
 
 class Peahit{
   constructor(x,y){
@@ -326,6 +368,9 @@ class Plant{
       else if(this.state==="ready"){
         image(potatoMine,this.x,this.y);
       }
+    }
+    else if(this.plant=wallnut){
+      return
     }
     else{
 
@@ -714,7 +759,8 @@ let tempvalue;
 
 
 
-
+let mower;
+let lawnmowerArray=[]
 
 
 
@@ -816,6 +862,11 @@ function preload() {
   hugeWaveSound = loadSound("sounds/hugeWave.mp3");
   waveDefeatedSound = loadSound("sounds/wave-defeated.mp3");
   explosionSound = loadSound("sounds/explosion.mp3");
+
+
+
+
+  mower=loadImage("GIFs/lawnmower.png")
 }
 
 
@@ -838,6 +889,7 @@ function setup() {
   hugeWaveTimer.pause();
   backgroundMusic.amp(0.035);
   loseMusic.amp(0.6);
+  lawnmowerInitial()
 
 
   // peashootercd = 
@@ -902,9 +954,7 @@ function plantsdefaultfns(){
     else if (plant.plant==="potatomine"){
       plant.potato();
     }
-    else if (plant.plant === "wallnut"){
-      plant.wallnutDisplay();
-    }
+
   }
 }
 
@@ -915,6 +965,13 @@ function displaySunCurrency() {
 }
 
 
+
+function lawnmowerInitial(){
+  for (let i=1;i<6;i++){
+    let mowhawk = new Lawnmower(300-40,bg_topFence.height+i*tileSizeY-60)
+    lawnmowerArray.push(mowhawk)
+  }
+}
 
 
 
@@ -951,6 +1008,7 @@ function draw() {
 
     if (gameState === "pregame") {
       initializePacketTimers();
+      
       pregameCameraFWD.pan();
       let t = 13000;
       plantingTimer = new Timer(t);
@@ -958,6 +1016,7 @@ function draw() {
     else {
       pregameCameraBWD.pan();
       readySetPlant();
+      
       
     }
     if (gameState === "gameStart"){
@@ -973,6 +1032,15 @@ function draw() {
       zombieSpawning();
       hugeWaveDisplay();
       waveCleared();
+      for (let i=0;i<lawnmowerArray.length;i++){
+        lawnmowerArray[i].update()
+        lawnmowerArray[i].display()
+        if (lawnmowerArray[i].x>3000){
+          lawnmowerArray.splice(i,1)
+        }
+      }
+
+
 
 
       for (let i=0;i<explosionArray.length;i++){
@@ -1025,7 +1093,7 @@ function draw() {
       loseMusic.play();
     }
     
-    // displayMouseXY(); // DELET AT END
+    displayMouseXY(); // DELET AT END
     
   }
   
@@ -1363,7 +1431,7 @@ function drawGrid() {
         image(repeater, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
       }
       else if(grid[y][x]==="4"){
-        image(wallnut, 274+lawnmower.width+x*tileSizeX+20, bg_topFence.height+ y*tileSizeY , plantSizeX, plantSizeY);
+        
         for (let plant of plantArray){
           if (plant.x === x && plant.y=== y){
             if (plant.health>200){
