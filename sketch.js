@@ -6,7 +6,11 @@
 // Extra for Experts:
 
 
-// TO DO LIST -- plant packet cooldowns, winning screen, spudow and cherry explosion
+// TO DO LIST -- plant packet cooldowns, winning screen,
+
+
+
+
 class Lawnmower{
   constructor(x,y){
     this.x=x
@@ -30,17 +34,15 @@ class Lawnmower{
   }
 
   display(){
-    image(mower,this.x,this.y,80,60)
+    image(mower,this.x,this.y -40,80,60)
   }
 
   colliding(zombie){
-    // let x = Math.floor((this.x-lawnmower.width-274)/tileSizeX+0.5);
+
     let y = Math.floor((this.y-bg_topFence.height)/tileSizeY);
     let zy = Math.floor((zombie.y-53)/tileSizeY)
     let x = this.x+80
-    // return Math.abs(x-plant.x<1)&&y===plant.y;
 
-    // let px = 274+lawnmower.width+plant.x*tileSizeX+20;
     return Math.abs(zombie.x-this.x)<10&&y===zy;
   }
 
@@ -614,6 +616,7 @@ let menuButton;
 let menuScreen;
 let trophyImage;
 
+
 // Game Sounds
 let backgroundMusic;
 let loseMusic;
@@ -640,6 +643,7 @@ let potatoMinePacket;
 let wallnutPacket;
 let chomperPacket;
 let repeaterPacket;
+let shovelPacket;
 
 
 // Plants
@@ -708,6 +712,7 @@ let sun;
 let pea;
 let peaHit;
 let potatoExplosion;
+let shovel;
 
 let sunCurrency = 50;
 let firstLevel = [0, "zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 8, "bucket", "cone", "cone", "zombie", "bucket", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
@@ -774,6 +779,7 @@ function preload() {
   pea = loadImage("GIFs/peaBullet.png");
   peaHit = loadImage("GIFs/peaHit.png");
   potatoExplosion = loadImage("GIFS/potatoexplode.png");
+  shovel = loadImage("GIFS/shovel.png");
 
   // Plant GIFs
   peashooter = loadImage("GIFs/plants/peashooter.gif");
@@ -813,6 +819,7 @@ function preload() {
   wallnutPacket = loadImage("packets/wallnut.webp");
   chomperPacket = loadImage("packets/chomper.webp");
   repeaterPacket = loadImage("packets/repeater.webp");
+  shovelPacket = loadImage("packets/shovelPacket.png");
 
 
   // Load images
@@ -839,9 +846,9 @@ function preload() {
   youLostMessage = loadImage("Game Messages/zombiesWon.webp");
   hugeWaveMessage = loadImage("Game Messages/largewave.png");
   trophyImage = loadImage("Game Messages/trophy.png");
+
   spudow = loadImage("Game Messages/spudow.png");
   cherrykaboom = loadImage("Game Messages/cherrykaboom.png");
-  
   menuButton = loadImage("menus/pausemenu/home.png");
   menuScreen = loadImage("menus/pausemenu/menuscreen.png");
 
@@ -1032,6 +1039,9 @@ function draw() {
       zombieSpawning();
       hugeWaveDisplay();
       waveCleared();
+      drawCooldownMessage(mouseX, mouseY);
+
+
       for (let i=0;i<lawnmowerArray.length;i++){
         lawnmowerArray[i].update()
         lawnmowerArray[i].display()
@@ -1249,7 +1259,7 @@ function displayMouseXY() {
 
 
 function detectPacketInteractions(){
-  let pWidth = sunflowerPacket.width;
+  // let pWidth = sunflowerPacket.width;
   let pHeight = sunflowerPacket.height;
   if (mouseIsPressed && mouseY>8 && mouseY<8+pHeight){
     if (mouseX>116 && mouseX<170&& sunCurrency>=50){
@@ -1273,7 +1283,11 @@ function detectPacketInteractions(){
     if (mouseX>500 && mouseX<554 && sunCurrency>=25){
       hoveredPlant = "potatomine";
     }
-    
+  }
+  else if (mouseIsPressed && mouseY > 0 && mouseX < 70){
+    if (mouseX>865 && mouseX<935){
+      hoveredPlant = "shovel";
+    }
   }
 }
 
@@ -1299,6 +1313,9 @@ function displayPlantSeeds() {
   }
   else if (hoveredPlant === "potatomine") {
     image(unarmedpotato, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX + 20, plantSizeY);
+  }
+  else if (hoveredPlant === "shovel") {
+    image(shovel, mouseX + plantOffsetX, mouseY - plantOffsetY, plantSizeX + 20, plantSizeY);
   }
 }
 
@@ -1398,6 +1415,7 @@ function gameTime() {
   image(cherryBombPacket, 660, 8, 55, 78);
   image(chomperPacket, 726, 8, 55, 78);
   image(potatoMinePacket, 792, 8, 55, 78);
+  image(shovelPacket, 865, 0, 70, 70)
   
   
 }
@@ -1517,6 +1535,10 @@ function toggleCell(x, y) {
       plantingSound.play();
       potatoMinecd = new Timer(12000);
     }
+    else if (grid[y][x] !== "0" && hoveredPlant === "shovel"){
+      grid[y][x] = "0";
+      plantingSound.play();
+    }
 
 
     let plant;
@@ -1532,6 +1554,9 @@ function toggleCell(x, y) {
     
   }
 }
+
+
+
 
 function mousePressed() {
 
@@ -1690,5 +1715,39 @@ function initializePacketTimers() {
 function keyPressed() {
   if (key === "e") {
     hoveredPlant = null;
+  }
+}
+
+
+function drawCooldownMessage(mouseX, mouseY) {
+  let cooldownMessage = "";
+  let remainingTime;
+
+  // Check each plant's cooldown timer
+  if (hoveredPlant === "sunflower" && !sunflowercd.expired()) {
+    remainingTime = Math.ceil(sunflowercd.getRemainingTime() / 1000);
+    cooldownMessage = `On cooldown: ${remainingTime}s`;
+  } else if (hoveredPlant === "peashooter" && !peashootercd.expired()) {
+    remainingTime = Math.ceil(peashootercd.getRemainingTime() / 1000);
+    cooldownMessage = `On cooldown: ${remainingTime}s`;
+  } else if (hoveredPlant === "repeater" && !repeatercd.expired()) {
+    remainingTime = Math.ceil(repeatercd.getRemainingTime() / 1000);
+    cooldownMessage = `On cooldown: ${remainingTime}s`;
+  } else if (hoveredPlant === "wallnut" && !wallnutcd.expired()) {
+    remainingTime = Math.ceil(wallnutcd.getRemainingTime() / 1000);
+    cooldownMessage = `On cooldown: ${remainingTime}s`;
+  } else if (hoveredPlant === "cherrybomb" && !cherryBombcd.expired()) {
+    remainingTime = Math.ceil(cherryBombcd.getRemainingTime() / 1000);
+    cooldownMessage = `On cooldown: ${remainingTime}s`;
+  } else if (hoveredPlant === "potatomine" && !potatoMinecd.expired()) {
+    remainingTime = Math.ceil(potatoMinecd.getRemainingTime() / 1000);
+    cooldownMessage = `On cooldown: ${remainingTime}s`;
+  }
+
+  // Display the cooldown message if applicable
+  if (cooldownMessage) {
+    fill("white");
+    textSize(12);
+    text(cooldownMessage, mouseX + 240, mouseY + 30);
   }
 }
