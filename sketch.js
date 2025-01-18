@@ -8,6 +8,35 @@
 
 // TO DO LIST -- plant packet cooldowns, winning screen, spudow and cherry explosion
 
+class Peahit{
+  constructor(x,y){
+    this.x = x;
+    this.y=y;
+    this.timer = new Timer(200);
+    this.sound = false
+  }
+
+  update(location){
+    if (this.timer.expired()){
+      hitArray.splice(location,1);      
+    }
+    if (this.sound===false){
+      peaHitSound.play()
+      this.sound=true
+    }
+  }
+
+
+
+  display(){
+    image(peaHit,this.x,this.y,peaSize,peaSize)
+
+  }
+}
+
+
+
+
 class Explosion{
   constructor(x,y,type,time){
     this.x = x;
@@ -409,7 +438,12 @@ class Pea{
 
 
   update(arraylocation) {
-    if (this.hit || this.x >= 3000) {
+    if (this.hit) {
+      let h = new Peahit(this.x,this.y)
+      hitArray.push(h)
+      peaArray.splice(arraylocation, 1);
+    }
+    else if(this.x>3000){
       peaArray.splice(arraylocation, 1);
     }
     else {
@@ -420,8 +454,7 @@ class Pea{
   
   display(){
     if (this.hit) {
-      image(peaHit, this.x, this.y, peaSize, peaSize);
-      peaHitSound.play();
+      return
     } 
     else {
       image(pea, this.x, this.y, peaSize, peaSize);
@@ -667,7 +700,7 @@ let sunArray = [];
 let zombieArray = [];
 let plantArray = [];
 let explosionArray=[];
-
+let hitArray=[]
 
 
 // Timing Values
@@ -945,6 +978,10 @@ function draw() {
       for (let i=0;i<explosionArray.length;i++){
         explosionArray[i].display();
         explosionArray[i].update(i);
+      }
+      for (let i=0;i<hitArray.length;i++){
+        hitArray[i].display();
+        hitArray[i].update(i);
       }
 
 
