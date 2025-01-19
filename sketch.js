@@ -56,7 +56,7 @@ class Peahit{
   constructor(x,y){
     this.x = x;
     this.y=y;
-    this.timer = new Timer(200);
+    this.timer = new Timer(100);
     this.sound = false
   }
 
@@ -554,8 +554,8 @@ class Sun {
     if (this.collected){
       sunArray.splice(arraylocation,1);
       sunCurrency += 25;
+      sunCollectSound.play();
     }
-    sunCollectSound.play();
   }
 
   display() {
@@ -615,6 +615,8 @@ let cherrykaboom;
 let menuButton;
 let menuScreen;
 let trophyImage;
+let crazyDave;
+let blackScreen;
 
 
 // Game Sounds
@@ -672,6 +674,7 @@ let bucketZombieStill, bucketZombieWalk, bucketZombieAttack;
 
 let spawning = false;
 let finishSpawning = false;
+let trophyState = null;
 
 
 // Grid (9x5)
@@ -715,7 +718,8 @@ let potatoExplosion;
 let shovel;
 
 let sunCurrency = 50;
-let firstLevel = [0, "zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 8, "bucket", "cone", "cone", "zombie", "bucket", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
+// let firstLevel = [0, "zombie", 27, "zombie", 24, "zombie", 19, "zombie", 3, "zombie", 20, "cone", 19, "zombie", 15, "cone", "zombie", 17, "bucket", 6, "zombie", 20, "cone", "zombie", "zombie", 9, "zombie", 3, "bucket", 16, "cone", 6, "cone", 4, "zombie", 10, "bucket", "cone", 9, "cone", 6, "zombie", 21, "largewave", 8, "bucket", "cone", "cone", "zombie", "bucket", 5, "bucket", "bucket", "cone", "cone", "zombie", 5, "cone", "cone", "zombie", "zombie","zombie", "end"];
+let firstLevel = [0, "zombie", 2, "zombie", "end"]
 let levelPosition = 0;
 let gamemode = null;
 const zombieSpeedModifier = 0.06;
@@ -846,6 +850,8 @@ function preload() {
   youLostMessage = loadImage("Game Messages/zombiesWon.webp");
   hugeWaveMessage = loadImage("Game Messages/largewave.png");
   trophyImage = loadImage("Game Messages/trophy.png");
+  crazyDave = loadImage("Game Messages/crazyDave.png");
+  blackScreen = loadImage("Game Messages/blackScreen.png")
 
   spudow = loadImage("Game Messages/spudow.png");
   cherrykaboom = loadImage("Game Messages/cherrykaboom.png");
@@ -1038,63 +1044,10 @@ function draw() {
       displaySunCurrency();
       zombieSpawning();
       hugeWaveDisplay();
-      waveCleared();
       drawCooldownMessage(mouseX, mouseY);
-
-
-      for (let i=0;i<lawnmowerArray.length;i++){
-        lawnmowerArray[i].update()
-        lawnmowerArray[i].display()
-        if (lawnmowerArray[i].x>3000){
-          lawnmowerArray.splice(i,1)
-        }
-      }
-
-
-
-
-      for (let i=0;i<explosionArray.length;i++){
-        explosionArray[i].display();
-        explosionArray[i].update(i);
-      }
-      for (let i=0;i<hitArray.length;i++){
-        hitArray[i].display();
-        hitArray[i].update(i);
-      }
-
-
-      for (let i = 0; i < zombieArray.length; i++) {
-        let isEating = false; // Track if the zombie is eating any plant
-
-        for (let plant of plantArray) {
-          if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"&&plant.plant==="potatomine"&&plant.state==="ready"){
-
-            
-            let potatoExplosion = new Explosion(plant.x,plant.y,"potato",2000);
-            explosionArray.push(potatoExplosion);
-            explosionSound.play();
-            plant.health=-1;
-            zombieArray.splice(i,1);
-            return;
-
-          }
-          if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"){
-            zombieArray[i].state = "eat";
-            zombieArray[i].eat(plant);
-            isEating = true; // Mark as eating
-            break; // Stop checking other plants for this zombie
-          }
-        }
-        if (!isEating&&zombieArray[i].state!=="dead") {
-          zombieArray[i].state = "walk"; // Only set to walk if no collision was detected
-        }
-        zombieArray[i].display();
-        zombieArray[i].update(i);
-        
-
-      }
-
+      displayEffects();
     }
+
 
     if (gameState === "lost"){
       image(youLostMessage, width/2, height/2 - 250);
@@ -1103,10 +1056,18 @@ function draw() {
       loseMusic.play();
     }
     
+
+    if (finishSpawning === true) {
+      waveCleared();
+      trophyInteractions();
+      trophyClicked();
+    }
+
     displayMouseXY(); // DELET AT END
     
   }
   
+
 }
 
 
@@ -1607,9 +1568,8 @@ function initializeZombies() {
         hugeWaveTimer.start();
         levelPosition++;
       }
-      else if (firstLevel[levelPosition] === "end" && spawningCooldown.expired()){
+      else if (firstLevel[levelPosition] === "end"){
         finishSpawning = true;
-        gameState = "won";
       }
     }
     
@@ -1619,17 +1579,10 @@ function initializeZombies() {
 
 
 function waveCleared() {
-  if (gameState === "won"){
+  if (finishSpawning === true){
     if (zombieArray.length === 0) {
-      levelPosition = 0;
-      image(trophyImage, width/2, height/2);
-      if (waveDefeatedHasPlayed === false){
-        waveDefeatedSound.play();
-        waveDefeatedHasPlayed = true;
-        if (frameCount % 40 === 0) {
-          waveDefeatedHasPlayed = false;
-        }
-      }
+      image(trophyImage, width/2, height/4);
+      trophyInteractions();
     }
   }
 }
@@ -1716,6 +1669,9 @@ function keyPressed() {
   if (key === "e") {
     hoveredPlant = null;
   }
+  if (key === "r" && trophyState === "clicked") {
+    modeState = "menu";
+  }
 }
 
 
@@ -1751,3 +1707,78 @@ function drawCooldownMessage(mouseX, mouseY) {
     text(cooldownMessage, mouseX + 240, mouseY + 30);
   }
 }
+
+
+function displayEffects() {
+  for (let i=0;i<lawnmowerArray.length;i++){
+    lawnmowerArray[i].update()
+    lawnmowerArray[i].display()
+    if (lawnmowerArray[i].x>3000){
+      lawnmowerArray.splice(i,1)
+    }
+  }
+
+
+
+
+  for (let i=0;i<explosionArray.length;i++){
+    explosionArray[i].display();
+    explosionArray[i].update(i);
+  }
+  for (let i=0;i<hitArray.length;i++){
+    hitArray[i].display();
+    hitArray[i].update(i);
+  }
+
+
+  for (let i = 0; i < zombieArray.length; i++) {
+    let isEating = false; // Track if the zombie is eating any plant
+
+    for (let plant of plantArray) {
+      if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"&&plant.plant==="potatomine"&&plant.state==="ready"){
+
+        
+        let potatoExplosion = new Explosion(plant.x,plant.y,"potato",2000);
+        explosionArray.push(potatoExplosion);
+        explosionSound.play();
+        plant.health=-1;
+        zombieArray.splice(i,1);
+        return;
+
+      }
+      if (zombieArray[i].colliding(plant)&&zombieArray[i].state!=="dead"){
+        zombieArray[i].state = "eat";
+        zombieArray[i].eat(plant);
+        isEating = true; // Mark as eating
+        break; // Stop checking other plants for this zombie
+      }
+    }
+    if (!isEating&&zombieArray[i].state!=="dead") {
+      zombieArray[i].state = "walk"; // Only set to walk if no collision was detected
+    }
+    zombieArray[i].display();
+    zombieArray[i].update(i);
+    
+
+  }
+}
+
+function trophyInteractions() {
+  if (finishSpawning === true)
+    if (mousePressed){
+      if (mouseX > 410 && mouseX <570 && mouseY > 250 && mouseY < 380 && zombieArray.length === 0){
+        trophyImage = "clicked";
+        waveDefeatedSound.play();
+      }
+    }
+  } 
+
+
+  function trophyClicked() {
+    if (trophyState === "clicked") {
+      trophyImage.hide()
+      image(crazyDave, 200, 900)
+      image(blackScreen, 0, 0)
+      text("There is only more to come... click R to restart")
+    }
+  }
